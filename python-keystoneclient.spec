@@ -21,6 +21,7 @@ Requires:   python-simplejson
 Requires:   python-httplib2
 Requires:   python-prettytable
 
+BuildRequires: python2-devel
 BuildRequires: python-setuptools
 
 %description
