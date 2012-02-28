@@ -4,13 +4,13 @@
 %global release_name essex
 %global release_letter e
 %global milestone 4
-%global snapdate 20120224
+%global snapdate 20120228
 %global git_revno 0
 %global snaptag ~%{release_letter}%{milestone}~%{snapdate}.%{git_revno}
 
 Name:       python-keystoneclient
 Version:    2012.1
-Release:    0.3.%{release_letter}%{milestone}%{?dist}
+Release:    0.4.%{release_letter}%{milestone}%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -72,6 +72,10 @@ rm -fr html/.doctrees html/.buildinfo
 %doc html
 
 %changelog
+* Tue Feb 28 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.4.e4
+- Endpoints: Add create, delete, list support
+  https://review.openstack.org/4594
+
 * Fri Feb 24 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.3.e4
 - Improve usability of CLI. https://review.openstack.org/4375
 
