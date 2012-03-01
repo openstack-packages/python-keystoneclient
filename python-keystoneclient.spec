@@ -4,13 +4,13 @@
 %global release_name essex
 %global release_letter e
 %global milestone 4
-%global snapdate 20120228
-%global git_revno 0
+%global snapdate 20120229
+%global git_revno r72
 %global snaptag ~%{release_letter}%{milestone}~%{snapdate}.%{git_revno}
 
 Name:       python-keystoneclient
 Version:    2012.1
-Release:    0.4.%{release_letter}%{milestone}%{?dist}
+Release:    0.5.%{release_letter}%{milestone}%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -18,8 +18,8 @@ License:    ASL 2.0
 URL:        https://github.com/openstack/python-keystoneclient
 BuildArch:  noarch
 
-#Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
-Source0:    http://keystone.openstack.org/tarballs/%{name}-%{version}%{snaptag}.tar.gz
+Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
+#Source0:    http://keystone.openstack.org/tarballs/%{name}-%{version}%{snaptag}.tar.gz
 
 Requires:   python-simplejson
 Requires:   python-httplib2
@@ -72,6 +72,9 @@ rm -fr html/.doctrees html/.buildinfo
 %doc html
 
 %changelog
+* Thu Mar 01 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.5.e4
+- essex-4 milestone
+
 * Tue Feb 28 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.4.e4
 - Endpoints: Add create, delete, list support
   https://review.openstack.org/4594
