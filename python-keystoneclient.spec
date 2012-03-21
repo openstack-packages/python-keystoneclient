@@ -4,8 +4,8 @@
 %global release_name essex
 %global release_letter rc
 %global milestone 1
-%global snapdate 20120316
-%global git_revno 86
+%global snapdate 20120321
+%global git_revno 92
 %global snaptag ~%{release_letter}%{milestone}~%{snapdate}.%{git_revno}
 
 Name:       python-keystoneclient
@@ -20,6 +20,9 @@ BuildArch:  noarch
 
 #Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
 Source0:    http://keystone.openstack.org/tarballs/%{name}-%{version}%{snaptag}.tar.gz
+
+# https://review.openstack.org/5353
+Patch1: avoid-No-handlers-could-be-found.patch
 
 Requires:   python-simplejson
 Requires:   python-httplib2
@@ -46,6 +49,7 @@ Keystone's API.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 %{__python} setup.py build
