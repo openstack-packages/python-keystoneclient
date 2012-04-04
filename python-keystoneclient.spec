@@ -1,16 +1,16 @@
 #
-# This is 2012.1 essex rc1
+# This is 2012.1 essex rc2
 #
 %global release_name essex
 %global release_letter rc
-%global milestone 1
-%global snapdate 20120323
-%global git_revno r92
+%global milestone 2
+%global snapdate 20120403
+%global git_revno r94
 %global snaptag ~%{release_letter}%{milestone}~%{snapdate}.%{git_revno}
 
 Name:       python-keystoneclient
 Version:    2012.1
-Release:    0.7.%{release_letter}%{milestone}%{?dist}
+Release:    0.8.%{release_letter}%{milestone}%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -76,8 +76,11 @@ rm -fr html/.doctrees html/.buildinfo
 %doc html
 
 %changelog
+* Thu Apr 05 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.8.rc2
+- essex rc2
+
 * Sat Mar 24 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.7.rc1
-- upate to final essex rc1
+- update to final essex rc1
 
 * Wed Mar 21 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.6.rc1
 - essex rc1
