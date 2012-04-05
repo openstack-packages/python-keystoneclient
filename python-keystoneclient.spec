@@ -1,5 +1,5 @@
 #
-# This is 2012.1 essex rc2
+# This is 2012.1 essex release
 #
 %global release_name essex
 %global release_letter rc
@@ -10,7 +10,8 @@
 
 Name:       python-keystoneclient
 Version:    2012.1
-Release:    0.8.%{release_letter}%{milestone}%{?dist}
+Release:    1%{?dist}
+#Release:    0.1.%{release_letter}%{milestone}%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -18,7 +19,8 @@ License:    ASL 2.0
 URL:        https://github.com/openstack/python-keystoneclient
 BuildArch:  noarch
 
-Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
+Source0:    http://launchpad.net/keystone/%{release_name}/+download/%{name}-%{version}.tar.gz
+#Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
 #Source0:    http://keystone.openstack.org/tarballs/%{name}-%{version}%{snaptag}.tar.gz
 
 # https://review.openstack.org/5353
@@ -76,6 +78,9 @@ rm -fr html/.doctrees html/.buildinfo
 %doc html
 
 %changelog
+* Thu Apr 05 2012 Alan Pevec <apevec@redhat.com> 2012.1-1
+- Essex release
+
 * Thu Apr 05 2012 Alan Pevec <apevec@redhat.com> 2012.1-0.8.rc2
 - essex rc2
 
