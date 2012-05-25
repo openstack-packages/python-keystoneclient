@@ -1,17 +1,16 @@
 #
-# This is 2012.1 essex release
+# This is 2012.2 folsom-1 milestone
 #
-%global release_name essex
-%global release_letter rc
-%global milestone 2
-%global snapdate 20120403
-%global git_revno r94
+%global release_name folsom
+%global release_letter f
+%global milestone 1
+%global snapdate 20120523
+%global git_revno r107
 %global snaptag ~%{release_letter}%{milestone}~%{snapdate}.%{git_revno}
 
 Name:       python-keystoneclient
-Version:    2012.1
-Release:    1%{?dist}
-#Release:    0.1.%{release_letter}%{milestone}%{?dist}
+Version:    2012.2
+Release:    0.1.%{release_letter}%{milestone}%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -19,8 +18,8 @@ License:    ASL 2.0
 URL:        https://github.com/openstack/python-keystoneclient
 BuildArch:  noarch
 
-Source0:    http://launchpad.net/keystone/%{release_name}/+download/%{name}-%{version}.tar.gz
-#Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
+#Source0:    http://launchpad.net/keystone/%{release_name}/+download/%{name}-%{version}.tar.gz
+Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
 #Source0:    http://keystone.openstack.org/tarballs/%{name}-%{version}%{snaptag}.tar.gz
 
 # https://review.openstack.org/5353
