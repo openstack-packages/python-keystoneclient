@@ -10,7 +10,7 @@
 
 Name:       python-keystoneclient
 Version:    2012.2
-Release:    0.1.%{release_letter}%{milestone}%{?dist}
+Release:    0.2.%{release_letter}%{milestone}%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -77,6 +77,9 @@ rm -fr html/.doctrees html/.buildinfo
 %doc html
 
 %changelog
+* Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2012.2-0.2.f1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Thu Apr 05 2012 Alan Pevec <apevec@redhat.com> 2012.1-1
 - Essex release
 
