@@ -1,16 +1,10 @@
-#
-# This is 2012.2 folsom-1 milestone
-#
-%global release_name folsom
-%global release_letter f
-%global milestone 1
-%global snapdate 20120523
-%global git_revno r107
-%global snaptag ~%{release_letter}%{milestone}~%{snapdate}.%{git_revno}
-
 Name:       python-keystoneclient
-Version:    2012.2
-Release:    0.2.%{release_letter}%{milestone}%{?dist}
+# Since folsom-2 OpenStack clients follow their own release plan
+# and restarted version numbering from 0.1.1
+# https://lists.launchpad.net/openstack/msg14248.html
+Epoch:      1
+Version:    0.1.1
+Release:    1%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -18,9 +12,7 @@ License:    ASL 2.0
 URL:        https://github.com/openstack/python-keystoneclient
 BuildArch:  noarch
 
-#Source0:    http://launchpad.net/keystone/%{release_name}/+download/%{name}-%{version}.tar.gz
-Source0:    http://launchpad.net/keystone/%{release_name}/%{release_name}-%{milestone}/+download/%{name}-%{version}~%{release_letter}%{milestone}.tar.gz
-#Source0:    http://keystone.openstack.org/tarballs/%{name}-%{version}%{snaptag}.tar.gz
+Source0:    https://launchpad.net/python-keystoneclient/trunk/%{version}/+download/%{name}-%{version}.tar.gz
 
 # https://review.openstack.org/5353
 Patch1: avoid-No-handlers-could-be-found.patch
@@ -39,8 +31,6 @@ Keystone's API.
 %package doc
 Summary:    Documentation for OpenStack Keystone API Client
 Group:      Documentation
-
-Requires:   %{name} = %{version}-%{release}
 
 BuildRequires: python-sphinx
 
@@ -62,10 +52,11 @@ Keystone's API.
 rm -fr %{buildroot}%{python_sitelib}/tests
 
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
-sphinx-build -b html docs html
-
+pushd doc
+make html
+popd
 # Fix hidden-file-or-dir warnings
-rm -fr html/.doctrees html/.buildinfo
+rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 
 %files
 %doc README.rst
@@ -74,9 +65,12 @@ rm -fr html/.doctrees html/.buildinfo
 %{python_sitelib}/*.egg-info
 
 %files doc
-%doc html
+%doc LICENSE doc/build/html
 
 %changelog
+* Mon Jul 23 2012 Alan Pevec <apevec@redhat.com> 1:0.1.1-1
+- New upstream release.
+
 * Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2012.2-0.2.f1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
