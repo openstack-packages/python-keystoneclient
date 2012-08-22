@@ -3,7 +3,7 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.1.1
+Version:    0.1.2
 Release:    1%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
@@ -17,9 +17,10 @@ Source0:    https://launchpad.net/python-keystoneclient/trunk/%{version}/+downlo
 # https://review.openstack.org/5353
 Patch1: avoid-No-handlers-could-be-found.patch
 
-Requires:   python-simplejson
 Requires:   python-httplib2
 Requires:   python-prettytable
+Requires:   python-setuptools
+Requires:   python-simplejson
 
 BuildRequires: python2-devel
 BuildRequires: python-setuptools
@@ -41,6 +42,8 @@ Keystone's API.
 %prep
 %setup -q
 %patch1 -p1
+# Remove bundled egg-info
+rm -rf python_keystoneclient.egg-info
 
 %build
 %{__python} setup.py build
@@ -68,6 +71,10 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Wed Aug 22 2012 Alan Pevec <apevec@redhat.com> 1:0.1.2-1
+- Add dependency on python-setuptools (#850842)
+- New upstream release.
+
 * Mon Jul 23 2012 Alan Pevec <apevec@redhat.com> 1:0.1.1-1
 - New upstream release.
 
