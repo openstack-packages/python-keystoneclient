@@ -3,7 +3,7 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.1.2
+Version:    0.1.3
 Release:    1%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
@@ -71,6 +71,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Sun Sep 23 2012 Alan Pevec <apevec@redhat.com> 1:0.1.3-1
+- Change underscores in new cert options to dashes (lp#1040162)
+
 * Wed Aug 22 2012 Alan Pevec <apevec@redhat.com> 1:0.1.2-1
 - Add dependency on python-setuptools (#850842)
 - New upstream release.
