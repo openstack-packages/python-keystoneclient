@@ -3,7 +3,7 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.1.3
+Version:    0.1.3.9
 Release:    1%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
@@ -12,12 +12,14 @@ License:    ASL 2.0
 URL:        https://github.com/openstack/python-keystoneclient
 BuildArch:  noarch
 
-Source0:    https://launchpad.net/python-keystoneclient/trunk/%{version}/+download/%{name}-%{version}.tar.gz
+#Source0:    https://launchpad.net/%{name}/trunk/%{version}/+download/%{name}-%{version}.tar.gz
+Source0:    http://tarballs.openstack.org/%{name}/%{name}-%{version}.tar.gz
+
 
 # https://review.openstack.org/5353
 Patch1: avoid-No-handlers-could-be-found.patch
 
-Requires:   python-httplib2
+Requires:   python-httplib2 >= 0.7
 Requires:   python-prettytable
 Requires:   python-setuptools
 Requires:   python-simplejson
@@ -71,6 +73,13 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Thu Sep 27 2012 Alan Pevec <apevec@redhat.com> 1:0.1.3.9-1
+- Handle "503 Service Unavailable" exception (lp#1028799)
+- add --wrap option for long PKI tokens (lp#1053728)
+- remove deprecated Diablo options
+- add --os-token and --os-endpoint options to match
+  http://wiki.openstack.org/UnifiedCLI/Authentication
+
 * Sun Sep 23 2012 Alan Pevec <apevec@redhat.com> 1:0.1.3-1
 - Change underscores in new cert options to dashes (lp#1040162)
 
