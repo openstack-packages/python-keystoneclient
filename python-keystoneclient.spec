@@ -3,7 +3,7 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.1.3.9
+Version:    0.1.3.27
 Release:    1%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
@@ -73,6 +73,13 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Tue Oct 16 2012 Alan Pevec <apevec@redhat.com> 0.1.3.27-1
+- Allow empty description for tenants (lp#1025929)
+- Documentation updates
+- change default  wrap for tokens from 78 characters to 0 (lp#1061514)
+- bootstrap a keystone user in one cmd
+- Useful message when missing catalog (lp#949904)
+
 * Thu Sep 27 2012 Alan Pevec <apevec@redhat.com> 1:0.1.3.9-1
 - Handle "503 Service Unavailable" exception (lp#1028799)
 - add --wrap option for long PKI tokens (lp#1053728)
