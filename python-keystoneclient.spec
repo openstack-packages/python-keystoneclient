@@ -3,7 +3,7 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.1.3.27
+Version:    0.2.0
 Release:    1%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
@@ -16,8 +16,10 @@ BuildArch:  noarch
 Source0:    http://tarballs.openstack.org/%{name}/%{name}-%{version}.tar.gz
 
 
-# https://review.openstack.org/5353
-Patch1: avoid-No-handlers-could-be-found.patch
+#
+# patches_base=0.2.0
+#
+Patch0001: 0001-Fix-scoped-auth-for-non-admins-bug-1081192.patch
 
 Requires:   python-httplib2 >= 0.7
 Requires:   python-prettytable
@@ -43,7 +45,7 @@ Keystone's API.
 
 %prep
 %setup -q
-%patch1 -p1
+%patch0001 -p1
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
 
@@ -73,6 +75,23 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Fri Nov 23 2012 Alan Pevec <apevec@redhat.com> 0.2.0-1
+- New upstream release.
+- Identity API v3 support
+- add service_id column to endpoint-list
+- avoid ValueError exception for 400 or 404 lp#1067512
+- use system default CA certificates lp#106483
+- keep original IP lp#1046837
+- avoid exception for an expected empty catalog lp#1070493
+- fix keystoneclient against Rackspace Cloud Files lp#1074784
+- blueprint solidify-python-api
+- blueprint authtoken-to-keystoneclient-repo
+- fix auth_ref initialization lp#1078589
+- warn about bypassing auth on CLI lp#1076225
+- check creds before token/endpoint lp#1076233
+- check for auth URL before password lp#1076235
+- fix scoped auth for non-admins lp#1081192
+
 * Tue Oct 16 2012 Alan Pevec <apevec@redhat.com> 0.1.3.27-1
 - Allow empty description for tenants (lp#1025929)
 - Documentation updates
