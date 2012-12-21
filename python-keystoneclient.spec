@@ -3,7 +3,7 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.2.0
+Version:    0.2.1
 Release:    1%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
@@ -17,9 +17,8 @@ Source0:    http://tarballs.openstack.org/%{name}/%{name}-%{version}.tar.gz
 
 
 #
-# patches_base=0.2.0
+# patches_base=0.2.1
 #
-Patch0001: 0001-Fix-scoped-auth-for-non-admins-bug-1081192.patch
 
 Requires:   python-httplib2 >= 0.7
 Requires:   python-prettytable
@@ -45,7 +44,6 @@ Keystone's API.
 
 %prep
 %setup -q
-%patch0001 -p1
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
 
@@ -54,6 +52,8 @@ rm -rf python_keystoneclient.egg-info
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
+mv %{buildroot}/usr/keystoneclient/versioninfo %{buildroot}%{python_sitelib}/keystoneclient/versioninfo
+install -p -D -m 644 tools/keystone.bash_completion %{buildroot}%{_sysconfdir}/bash_completion.d/keystone.bash_completion
 
 # Delete tests
 rm -fr %{buildroot}%{python_sitelib}/tests
@@ -68,6 +68,7 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %files
 %doc README.rst
 %{_bindir}/keystone
+%{_sysconfdir}/bash_completion.d/keystone.bash_completion
 %{python_sitelib}/keystoneclient
 %{python_sitelib}/*.egg-info
 
@@ -75,6 +76,10 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Fri Dec 21 2012 Alan Pevec <apevec@redhat.com> 0.2.1-1
+- New upstream release.
+- Add bash completion support
+
 * Fri Nov 23 2012 Alan Pevec <apevec@redhat.com> 0.2.0-1
 - New upstream release.
 - Identity API v3 support
