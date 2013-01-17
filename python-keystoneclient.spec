@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.2.1
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
@@ -20,10 +20,11 @@ Source0:    http://tarballs.openstack.org/%{name}/%{name}-%{version}.tar.gz
 # patches_base=0.2.1
 #
 
-Requires:   python-httplib2 >= 0.7
 Requires:   python-prettytable
 Requires:   python-setuptools
 Requires:   python-simplejson
+Requires:   python-keyring
+Requires:   python-requests
 
 BuildRequires: python2-devel
 BuildRequires: python-setuptools
@@ -76,6 +77,10 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Thu Jan 17 2013 Alan Pevec <apevec@redhat.com> 0.2.1-2
+- Add dependency on python-requests.
+- Add python-keyring RPM dependency.
+
 * Fri Dec 21 2012 Alan Pevec <apevec@redhat.com> 0.2.1-1
 - New upstream release.
 - Add bash completion support
