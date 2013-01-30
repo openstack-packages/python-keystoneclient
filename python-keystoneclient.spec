@@ -4,21 +4,19 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.2.2
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python API and CLI for OpenStack Keystone
 
 Group:      Development/Languages
 License:    ASL 2.0
-URL:        https://github.com/openstack/python-keystoneclient
-BuildArch:  noarch
-
+URL:        http://pypi.python.org/pypi/%{name}
 Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.tar.gz
-
 
 #
 # patches_base=0.2.2
 #
 
+BuildArch:  noarch
 Requires:   python-prettytable
 Requires:   python-setuptools
 Requires:   python-simplejson
@@ -46,6 +44,8 @@ Keystone's API.
 %setup -q
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
+# let RPM handle deps
+sed -i '/setup_requires/d; /install_requires/d; /dependency_links/d' setup.py
 
 %build
 %{__python} setup.py build
