@@ -4,10 +4,8 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.2.2
-Release:    2%{?dist}
-Summary:    Python API and CLI for OpenStack Keystone
-
-Group:      Development/Languages
+Release:    3%{?dist}
+Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
 Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.tar.gz
@@ -28,17 +26,17 @@ BuildRequires: python-setuptools
 
 %description
 Client library and command line utility for interacting with Openstack
-Keystone's API.
+Identity API.
 
 %package doc
-Summary:    Documentation for OpenStack Keystone API Client
+Summary:    Documentation for OpenStack Identity API Client
 Group:      Documentation
 
 BuildRequires: python-sphinx
 
 %description doc
 Documentation for the client library for interacting with Openstack
-Keystone's API.
+Identity API.
 
 %prep
 %setup -q
@@ -66,7 +64,7 @@ popd
 rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 
 %files
-%doc README.rst
+%doc LICENSE README.rst
 %{_bindir}/keystone
 %{_sysconfdir}/bash_completion.d/keystone.bash_completion
 %{python_sitelib}/keystoneclient
