@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.2.3
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -15,15 +15,22 @@ Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.
 #
 
 BuildArch:  noarch
-Requires:   python-prettytable
-Requires:   python-setuptools
-Requires:   python-simplejson
-Requires:   python-keyring
-Requires:   python-requests
-Requires:   python-oslo-config
 
 BuildRequires: python2-devel
 BuildRequires: python-setuptools
+
+# from tools/pip-requires
+Requires: python-argparse
+Requires: python-iso8601 >= 0.1.4
+Requires: python-prettytable
+Requires: python-requests >= 0.8.8
+Requires: python-simplejson
+Requires: python-oslo-config >= 1.1.0
+# other requirements
+Requires: python-setuptools
+Requires: python-keyring
+Requires: python-webob
+
 
 %description
 Client library and command line utility for interacting with Openstack
@@ -75,6 +82,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Thu Apr 04 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.2.3-2
+- Update requires. (#948244)
+
 * Tue Mar 19 2013 Alan Pevec <apevec@redhat.com> 0.2.3-1
 - New upstream release.
 
