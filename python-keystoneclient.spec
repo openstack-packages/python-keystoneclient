@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.2.3
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -13,6 +13,7 @@ Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.
 #
 # patches_base=0.2.3
 #
+Patch0001: 0001-Config-value-for-revocation-list-timeout.patch
 
 BuildArch:  noarch
 
@@ -48,6 +49,9 @@ Identity API.
 
 %prep
 %setup -q
+
+%patch0001 -p1
+
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
 # let RPM handle deps
@@ -82,6 +86,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Thu May 02 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.2.3-3
+- Config value for revocation list timeout. (#923519)
+
 * Thu Apr 04 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.2.3-2
 - Update requires. (#948244)
 
