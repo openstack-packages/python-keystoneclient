@@ -1,0 +1,580 @@
+From 951be96eab783008c91a4c5963ab83e0c97c52c4 Mon Sep 17 00:00:00 2001
+From: Chmouel Boudjnah <chmouel@enovance.com>
+Date: Tue, 12 Mar 2013 15:54:51 +0000
+Subject: [PATCH] Fix v3 with UUID and memcache expiring.
+
+- Regenerate tokens to change expires in expires_at.
+
+Change-Id: Iaa62dca50d34a228e4850b59d263b807c5ee3549
+---
+ examples/pki/certs/cacert.pem               | 20 ++++++-------
+ examples/pki/certs/middleware.pem           | 44 ++++++++++++++---------------
+ examples/pki/certs/signing_cert.pem         | 16 +++++------
+ examples/pki/certs/ssl_cert.pem             | 16 +++++------
+ examples/pki/cms/auth_token_revoked.pem     |  8 +++---
+ examples/pki/cms/auth_token_scoped.pem      |  6 ++--
+ examples/pki/cms/auth_token_unscoped.pem    |  8 +++---
+ examples/pki/cms/auth_v3_token_revoked.json |  2 +-
+ examples/pki/cms/auth_v3_token_revoked.pem  | 36 +++++++++++------------
+ examples/pki/cms/auth_v3_token_scoped.json  |  2 +-
+ examples/pki/cms/auth_v3_token_scoped.pem   | 34 +++++++++++-----------
+ examples/pki/cms/revocation_list.pem        |  6 ++--
+ examples/pki/private/cakey.pem              | 28 +++++++++---------
+ examples/pki/private/signing_key.pem        | 28 +++++++++---------
+ examples/pki/private/ssl_key.pem            | 28 +++++++++---------
+ keystoneclient/middleware/auth_token.py     |  2 +-
+ tests/test_auth_token_middleware.py         | 16 +++++------
+ tests/v2_0/test_auth.py                     |  4 +--
+ 18 files changed, 152 insertions(+), 152 deletions(-)
+
+diff --git a/examples/pki/certs/cacert.pem b/examples/pki/certs/cacert.pem
+index 6075f2e..1b5ff82 100644
+--- a/examples/pki/certs/cacert.pem
++++ b/examples/pki/certs/cacert.pem
+@@ -1,18 +1,18 @@
+ -----BEGIN CERTIFICATE-----
+-MIIC0TCCAjqgAwIBAgIJAK6p/UfYvENdMA0GCSqGSIb3DQEBBQUAMIGeMQowCAYD
++MIIC0TCCAjqgAwIBAgIJAPahRNeykBzVMA0GCSqGSIb3DQEBBQUAMIGeMQowCAYD
+ VQQFEwE1MQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExEjAQBgNVBAcTCVN1bm55
+ dmFsZTESMBAGA1UEChMJT3BlblN0YWNrMREwDwYDVQQLEwhLZXlzdG9uZTElMCMG
+ CSqGSIb3DQEJARYWa2V5c3RvbmVAb3BlbnN0YWNrLm9yZzEUMBIGA1UEAxMLU2Vs
+-ZiBTaWduZWQwIBcNMTMwMzA3MTcxMzEyWhgPMjA3MTA4MzAxNzEzMTJaMIGeMQow
++ZiBTaWduZWQwIBcNMTMwMzI0MDkwNTIzWhgPMjA3MTA5MTYwOTA1MjNaMIGeMQow
+ CAYDVQQFEwE1MQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExEjAQBgNVBAcTCVN1
+ bm55dmFsZTESMBAGA1UEChMJT3BlblN0YWNrMREwDwYDVQQLEwhLZXlzdG9uZTEl
+ MCMGCSqGSIb3DQEJARYWa2V5c3RvbmVAb3BlbnN0YWNrLm9yZzEUMBIGA1UEAxML
+-U2VsZiBTaWduZWQwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAOw4quFzQ/xb
+-UOKuLtXdiZLPA0Wi38iGEa+T8tp7j3US44wAamckdZb4cq9/Qx03EBKd2mcJvUoP
+-rLnSlnHQMH2VGA1whZpZTWqt8ydQdDYB1SUKeUoxcjq8EKl8X8Sd3dP5amlyFCOI
+-GVhFyAXYgaYlmf+s6FIzpY55Uy2zX+nZAgMBAAGjEzARMA8GA1UdEwEB/wQFMAMB
+-Af8wDQYJKoZIhvcNAQEFBQADgYEAp5nII86N8ISu2FGEW/Ja7zU0diZpv7h/8enR
+-06uwksv722ArOzQ22Y0xezZN3TEc5GVKPbHPSXfvvha09K5QlIp9idLy65Mu/DXa
+-Fo+kJoq7rMW6Det/mOoWp3O4zgYlxvKTFjyNo300nRir4nvHmbrF/vhXVqDm2roS
+-vLoyVvY=
++U2VsZiBTaWduZWQwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJ9ua8GSnhyR
++r7J5Wvu+PTwU4Vo2KrazwwE/Fd32dcZtX6at0/Zr62dADsC0Ig6MTfVZCIrrf2HJ
++pTzWCXa4n0kZXRZaq/L/qIv3Yl51FAOl06nCCsC1g+IIG4OnnQW+YbLfB0MHsOV/
++TdFbC6Y5t4UzFh0i6WqF7Z9ADKsBBXYlAgMBAAGjEzARMA8GA1UdEwEB/wQFMAMB
++Af8wDQYJKoZIhvcNAQEFBQADgYEACDpeI6XYf9yt+7cmG1r3i0a+GTXcMjz1WHOW
++/KVYKjolMLaAygmcUls0uecI8XCUFYqM5L9M9cTl8iUOAkyYvUfpWAFaxhzEkLZ6
++HkNEd1BfrUJAG2C2vVgCbnok+ltjMnl2EM/e7YuV3bc1CSfs9UvAM54ArVYyNVKU
++dufa8EQ=
+ -----END CERTIFICATE-----
+diff --git a/examples/pki/certs/middleware.pem b/examples/pki/certs/middleware.pem
+index 4e840fa..d93d2e3 100644
+--- a/examples/pki/certs/middleware.pem
++++ b/examples/pki/certs/middleware.pem
+@@ -3,31 +3,31 @@ MIICoTCCAgoCARAwDQYJKoZIhvcNAQEFBQAwgZ4xCjAIBgNVBAUTATUxCzAJBgNV
+ BAYTAlVTMQswCQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQK
+ EwlPcGVuU3RhY2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZr
+ ZXlzdG9uZUBvcGVuc3RhY2sub3JnMRQwEgYDVQQDEwtTZWxmIFNpZ25lZDAgFw0x
+-MzAzMDcxNzEzMTJaGA8yMDcxMDgzMDE3MTMxMlowgZAxCzAJBgNVBAYTAlVTMQsw
++MzAzMjQwOTA1MjNaGA8yMDcxMDkxNjA5MDUyM1owgZAxCzAJBgNVBAYTAlVTMQsw
+ CQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQKEwlPcGVuU3Rh
+ Y2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZrZXlzdG9uZUBv
+ cGVuc3RhY2sub3JnMRIwEAYDVQQDEwlsb2NhbGhvc3QwgZ8wDQYJKoZIhvcNAQEB
+-BQADgY0AMIGJAoGBAM323GVGJ6UImf6nfz9P+9MURBo0okaV/3ewyfSMri8DbM0s
+-CqDtC43R1jIrHtEdnUU7kHguFXc09p9pHSRbblZ3TNUuZgfoLTNUUY5LETrXdlIQ
+-8WQDqUZq2kSbUBWYkHOYlzmowoWa2hKUC1ifHcleI2dVMW+LIkDhXPEc4XO1AgMB
+-AAEwDQYJKoZIhvcNAQEFBQADgYEAchynxfP/FQC8FNhKs/dGI196qBq4MVobvNjQ
+-trdLAjbZwp1/i6SHLxXEDm9bIWyInE7D8hGqXXQAImzAaH0t3oYR3C4XQWOSPPwU
+-6tamnsXDVR2w3aHbEh6AuIahZQaau5tnGopwiWRDNZllbSlfay60r6Vj4ex5LtVM
+-eBLz1Jg=
++BQADgY0AMIGJAoGBAKFS7ztV1Ur3H+J+UrQlkxtbE/yr8GzJ+JO5yqG7OWpACtxS
++m3EQ1+qTLtHSIrwCeON2K6zht+HDxht9ATw61c3qu6NQYpfW//VH7bXXTZnF5c+d
++j1awpfqejzSL6dQO5grRl1Z2JF4IR//ziCXqgzk/QdzVYjZiH0+JYaM56ukRAgMB
++AAEwDQYJKoZIhvcNAQEFBQADgYEAltmvie7cuAnYbsJlHSjK84mHrEOUgpwy+Z8s
++b+Pflr7NIM9menQhKJ8/S/Xap0nPcFRxsg11eqT/sHh1pROmWkBaFfx6l+8snZt6
++cF5WI/XylgSE0n+/xbUmcRpY8frAAlp2eWxCFtzs8DMWYhHP+kySYhkkYT114Uu7
++Oaj5ztQ=
+ -----END CERTIFICATE-----
+ -----BEGIN PRIVATE KEY-----
+-MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAM323GVGJ6UImf6n
+-fz9P+9MURBo0okaV/3ewyfSMri8DbM0sCqDtC43R1jIrHtEdnUU7kHguFXc09p9p
+-HSRbblZ3TNUuZgfoLTNUUY5LETrXdlIQ8WQDqUZq2kSbUBWYkHOYlzmowoWa2hKU
+-C1ifHcleI2dVMW+LIkDhXPEc4XO1AgMBAAECgYBOZfMKkaOxjA6iAjvLa7Sdag9q
+-MjK6z4nIk4CsF4iN2K3ngyYgj1pgh0kTG5rFWpJssfmR5WjCUWS21RoEptDeZf/A
+-jRqzW3u493JAhyOjTK4DYbB9CwCmeGkoImC3nn2PrBgG1OPrSQMB3ODqVA2Pa1eF
+-omqKQmAqCCijtmllmQJBAOnpN3sjykUlGVWY7HxdBAOsQ5DkkCXL6ZSjA3pRYvJQ
+-12pKELZyxZ8GtVCFvOjaCpdxL+1MsRHkEfZpWz9o9BsCQQDhagjUFbgAQzo/TH1X
+-iblrnWUi7rs+IIDOF48qy/t1FKFlyCHbMYQLB/rPSN1G+5uMEapCuOBpVQsO9v5n
+-wJRvAkBQXOPG1sEDiH9vvR5ii8J5UJHWEfDES45wlqD3QUbxYXzg85lSVZQ30qIw
+-jAIfLeo9pZGFwbeEIgtZ0VCcNH7JAkBK3FEkRjY+eBUvEnMKEGYw9CuzZz9uCZNd
+-Xnughe/z2S8kw0tjJVWp6DOGhbdfLI5i/TbjQ8zbjm/Gv4aL5GwnAkEA42UWJKNQ
+-ztq73xmVmihToMjMe6k2DDPQpq+e2b/522Vz1ZDJlIV9tpoykFX2XiPnRz1o1oWd
+-DXQBvYeFzthvKA==
++MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKFS7ztV1Ur3H+J+
++UrQlkxtbE/yr8GzJ+JO5yqG7OWpACtxSm3EQ1+qTLtHSIrwCeON2K6zht+HDxht9
++ATw61c3qu6NQYpfW//VH7bXXTZnF5c+dj1awpfqejzSL6dQO5grRl1Z2JF4IR//z
++iCXqgzk/QdzVYjZiH0+JYaM56ukRAgMBAAECgYARVPiw1kLpH+3EBrBZ/GN2n+1g
++yxQ0i+px7JcRkyzS9nh0PUfH+PhJknCISFxE+LsGLQ76LvHzhnYFRAPa9bM8lZQx
++gAjroYx8vXSD5pcmDs+7SqxWCP/PI9IlT6F0dHanwXcLPjPCeBUZN/Z/ZyuOIpML
++DMDfbXHpbg9BF41qJQJBANPJ2VG6KrSqxzM1f7AHSpOp2UZqylMCe14TMSkWaHHX
++Bla8p+6D76Ixskh49L9yEpxFplgLP3fRcFfNpRCUSY8CQQDDADhxiQ+jsR69YJMe
++QYXYLpQfF2751x789NPfpytDEUOFZ8yyyLp3aNOAYoMrLXaMQTLTJgT5dA2D8QdU
++shNfAkEAwDzEnPFt2CX3wFy8NSy5HcWbKda/JY/oKSEki1YCoep6n3qIt/BcMI4J
++dM0N40SI7f4umlZDWt/pqFlKjfz7swJARYbjmR+ccunpIu63JdeI6G6bI4bQa8ZW
++5yxICvtowm36XCuJYcmOKps2phT53cBE/3cTrxNkPKkzVHLxATLJEwJBAL5sOt1g
++ChxUqvhBQtTgToX/WTDtGF3PEBNwU0YeOz4GweoqABxMzg08W/6rvsIFismNuWY5
++W6bZ8CxyKPcq/aE=
+ -----END PRIVATE KEY-----
+diff --git a/examples/pki/certs/signing_cert.pem b/examples/pki/certs/signing_cert.pem
+index a3b141e..6e5054d 100644
+--- a/examples/pki/certs/signing_cert.pem
++++ b/examples/pki/certs/signing_cert.pem
+@@ -3,15 +3,15 @@ MIICoDCCAgkCAREwDQYJKoZIhvcNAQEFBQAwgZ4xCjAIBgNVBAUTATUxCzAJBgNV
+ BAYTAlVTMQswCQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQK
+ EwlPcGVuU3RhY2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZr
+ ZXlzdG9uZUBvcGVuc3RhY2sub3JnMRQwEgYDVQQDEwtTZWxmIFNpZ25lZDAgFw0x
+-MzAzMDcxNzEzMTJaGA8yMDcxMDgzMDE3MTMxMlowgY8xCzAJBgNVBAYTAlVTMQsw
++MzAzMjQwOTA1MjNaGA8yMDcxMDkxNjA5MDUyM1owgY8xCzAJBgNVBAYTAlVTMQsw
+ CQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQKEwlPcGVuU3Rh
+ Y2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZrZXlzdG9uZUBv
+ cGVuc3RhY2sub3JnMREwDwYDVQQDEwhLZXlzdG9uZTCBnzANBgkqhkiG9w0BAQEF
+-AAOBjQAwgYkCgYEApibRgDiDl4u73oeVQjkiNBN+VYYSQ82UJoQvuoYbzYndAik9
+-P63vf42lu2tSMs8U/oNl/EqHvI92rZhGpzr9wRVAQuaKYlrPk1Sn9hJHFjjotSHY
+-Sq+ivlG7WmLoIrQkYYzFr3r+yiiYtzL0cv68objKEwGMZasn95nJSjqAxFUCAwEA
+-ATANBgkqhkiG9w0BAQUFAAOBgQAmFHIcvPC3G+DFM8Ke8kZi/UGl4ugUlkdIVmCG
+-yokdR0b7v72r8ocQ/QSIRcw/Y0t3lPsAt1Dq6m2zN8PAC30m4QQqCu4o1xEWU51N
+-sUfNaw55qjpYEpZ2DmUjJc0kzYIsmaDkqM4t5lTJ7K7+zoWdW9joJV+VAyEq6NiS
+-RhjOeg==
++AAOBjQAwgYkCgYEAv1bjDJlncTxQYShlKHfWKn7w3e8NL21N8/89THHl8r+c3sXO
++LIkn66WRCiVrJw0k5zmQ004bLFr/609KQzixkJaryKAgh6Gkl5q4HWcUF1AIHi3t
++sjcRtWMC14hvLiDHRFla69LJiuQ7SeHygIY9Yrco09f9uPi8FUmS8t9ufXECAwEA
++ATANBgkqhkiG9w0BAQUFAAOBgQA3wpXMrW/gk2pJNLFtFBKo3nQ4hMWSaRBNW9s6
++WpTFgIX1WdkAxz8C2WQRf1VYYaMOGO5SJBV9MDi2hIb93CcH5r+3ExdV4McWzYLL
++zNpqPIp6JLehSrxNWUyHlBCVZyVBVOliTv57Woy8MczCbpeOhx/9DjDMvlISflXr
++6Y6Zug==
+ -----END CERTIFICATE-----
+diff --git a/examples/pki/certs/ssl_cert.pem b/examples/pki/certs/ssl_cert.pem
+index 784638f..d705cf6 100644
+--- a/examples/pki/certs/ssl_cert.pem
++++ b/examples/pki/certs/ssl_cert.pem
+@@ -3,15 +3,15 @@ MIICoTCCAgoCARAwDQYJKoZIhvcNAQEFBQAwgZ4xCjAIBgNVBAUTATUxCzAJBgNV
+ BAYTAlVTMQswCQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQK
+ EwlPcGVuU3RhY2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZr
+ ZXlzdG9uZUBvcGVuc3RhY2sub3JnMRQwEgYDVQQDEwtTZWxmIFNpZ25lZDAgFw0x
+-MzAzMDcxNzEzMTJaGA8yMDcxMDgzMDE3MTMxMlowgZAxCzAJBgNVBAYTAlVTMQsw
++MzAzMjQwOTA1MjNaGA8yMDcxMDkxNjA5MDUyM1owgZAxCzAJBgNVBAYTAlVTMQsw
+ CQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQKEwlPcGVuU3Rh
+ Y2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZrZXlzdG9uZUBv
+ cGVuc3RhY2sub3JnMRIwEAYDVQQDEwlsb2NhbGhvc3QwgZ8wDQYJKoZIhvcNAQEB
+-BQADgY0AMIGJAoGBAM323GVGJ6UImf6nfz9P+9MURBo0okaV/3ewyfSMri8DbM0s
+-CqDtC43R1jIrHtEdnUU7kHguFXc09p9pHSRbblZ3TNUuZgfoLTNUUY5LETrXdlIQ
+-8WQDqUZq2kSbUBWYkHOYlzmowoWa2hKUC1ifHcleI2dVMW+LIkDhXPEc4XO1AgMB
+-AAEwDQYJKoZIhvcNAQEFBQADgYEAchynxfP/FQC8FNhKs/dGI196qBq4MVobvNjQ
+-trdLAjbZwp1/i6SHLxXEDm9bIWyInE7D8hGqXXQAImzAaH0t3oYR3C4XQWOSPPwU
+-6tamnsXDVR2w3aHbEh6AuIahZQaau5tnGopwiWRDNZllbSlfay60r6Vj4ex5LtVM
+-eBLz1Jg=
++BQADgY0AMIGJAoGBAKFS7ztV1Ur3H+J+UrQlkxtbE/yr8GzJ+JO5yqG7OWpACtxS
++m3EQ1+qTLtHSIrwCeON2K6zht+HDxht9ATw61c3qu6NQYpfW//VH7bXXTZnF5c+d
++j1awpfqejzSL6dQO5grRl1Z2JF4IR//ziCXqgzk/QdzVYjZiH0+JYaM56ukRAgMB
++AAEwDQYJKoZIhvcNAQEFBQADgYEAltmvie7cuAnYbsJlHSjK84mHrEOUgpwy+Z8s
++b+Pflr7NIM9menQhKJ8/S/Xap0nPcFRxsg11eqT/sHh1pROmWkBaFfx6l+8snZt6
++cF5WI/XylgSE0n+/xbUmcRpY8frAAlp2eWxCFtzs8DMWYhHP+kySYhkkYT114Uu7
++Oaj5ztQ=
+ -----END CERTIFICATE-----
+diff --git a/examples/pki/cms/auth_token_revoked.pem b/examples/pki/cms/auth_token_revoked.pem
+index 6136f6d..706a82d 100644
+--- a/examples/pki/cms/auth_token_revoked.pem
++++ b/examples/pki/cms/auth_token_revoked.pem
+@@ -35,8 +35,8 @@ ZXJuYW1lMSJ9fX0NCjGCAUkwggFFAgEBMIGkMIGeMQowCAYDVQQFEwE1MQswCQYD
+ VQQGEwJVUzELMAkGA1UECBMCQ0ExEjAQBgNVBAcTCVN1bm55dmFsZTESMBAGA1UE
+ ChMJT3BlblN0YWNrMREwDwYDVQQLEwhLZXlzdG9uZTElMCMGCSqGSIb3DQEJARYW
+ a2V5c3RvbmVAb3BlbnN0YWNrLm9yZzEUMBIGA1UEAxMLU2VsZiBTaWduZWQCAREw
+-BwYFKw4DAhowDQYJKoZIhvcNAQEBBQAEgYB3HICZ2Jj9edPkhmic5Td/qzod2FpQ
+-tB5EUL32Qw33FrMo6ALxG2znmiR3F2rf2kSmOVpBRQgysnkVXjDGPuBt/qMq41VR
+-NvvoM+Cf2HtDYGFvyyO3QNRf9NLaFije71pRQUBFR8iEz0zjvdouyuHVZsbQuke5
+-XdEgB8F3fQ6/Pg==
++BwYFKw4DAhowDQYJKoZIhvcNAQEBBQAEgYBVwrozZ7ZSZsTUg98slXCt52e/Y9IJ
++OOMdq28JxPs3HrNaMaZle7Q7XEGLolqLGT4k9bRNJNZwC+ldCqCApTW5c/JitZu5
++MLKLRiQpfEmkcYWe3JVciFjYV5UY9MCK6X9ltMhq9eNbmpEV+WwcLpiTIZq707oY
++L3PMMDvFW5qp2g==
+ -----END CMS-----
+diff --git a/examples/pki/cms/auth_token_scoped.pem b/examples/pki/cms/auth_token_scoped.pem
+index 20c6929..8fae319 100644
+--- a/examples/pki/cms/auth_token_scoped.pem
++++ b/examples/pki/cms/auth_token_scoped.pem
+@@ -35,7 +35,7 @@ AQEwgaQwgZ4xCjAIBgNVBAUTATUxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTES
+ MBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQKEwlPcGVuU3RhY2sxETAPBgNVBAsT
+ CEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZrZXlzdG9uZUBvcGVuc3RhY2sub3Jn
+ MRQwEgYDVQQDEwtTZWxmIFNpZ25lZAIBETAHBgUrDgMCGjANBgkqhkiG9w0BAQEF
+-AASBgFbBja47P7p32dQ+wAXKDn9/JL/RjImAKvT/f8bBZxmc+SbnmpDd0lwH44eE
+-cVFfq55Ny0+SmYaLP6ZgtvGYpiP9TqxuySHQP1EKxAmIFA2yRa3YTviTsSvH0OCC
+-WEnlYLxxdqh97whF3H5bDOMh6aVEyHPRS2m8oOqcPW+5o4gX
++AASBgJVelOrkaUyy9nzse+lV6qI2OK+qDhpXBZrHUeiI62ddO4ibMZw9W2+8rbLf
++8RIbZ2eotF1BUvEomYQgz/NKmOpJUknhyP7w6BIhm1E2ZGUgU7r2mc/zf8Owkys0
++Urc/B/akAhWanh0lZcu1ti6OCc7hnuq5ox2QDNmrTBQIMoUn
+ -----END CMS-----
+diff --git a/examples/pki/cms/auth_token_unscoped.pem b/examples/pki/cms/auth_token_unscoped.pem
+index 1c284a1..610e36f 100644
+--- a/examples/pki/cms/auth_token_unscoped.pem
++++ b/examples/pki/cms/auth_token_unscoped.pem
+@@ -10,8 +10,8 @@ dXNlcl9uYW1lMSJ9fX0xggFJMIIBRQIBATCBpDCBnjEKMAgGA1UEBRMBNTELMAkG
+ A1UEBhMCVVMxCzAJBgNVBAgTAkNBMRIwEAYDVQQHEwlTdW5ueXZhbGUxEjAQBgNV
+ BAoTCU9wZW5TdGFjazERMA8GA1UECxMIS2V5c3RvbmUxJTAjBgkqhkiG9w0BCQEW
+ FmtleXN0b25lQG9wZW5zdGFjay5vcmcxFDASBgNVBAMTC1NlbGYgU2lnbmVkAgER
+-MAcGBSsOAwIaMA0GCSqGSIb3DQEBAQUABIGARUpIQsA8a2g9HC1ZjpX37oXZz/3n
+-hdpRUyKTWbjd2mi2rC68DVnyHLhZ3SQfBN896fPG1HW6LFuFrserYwBYVrX1rGDz
+-OS2dBigPzeP1301X3IRdbDrnMvzmEX2eTSmBEZ/CMMOXTTSYAYutyOtzATW9v639
+-rRT4L/yQFcIxfCo=
++MAcGBSsOAwIaMA0GCSqGSIb3DQEBAQUABIGAEEEcj968A9f+WHIq0UBA42TlPhtg
++AOae7hfzkknymvt6ILizFyScp0766rJfRTO+wp/lsE0CKOXU6Ihy5MhZnggo/VGV
++szmitBeyDUF1hJrFi3jL62k/D6ChTxGpvu2YMRRvDyuaWO5ttS/7aqza1bv7Pry1
++BpbVtRi57LuDINk=
+ -----END CMS-----
+diff --git a/examples/pki/cms/auth_v3_token_revoked.json b/examples/pki/cms/auth_v3_token_revoked.json
+index 0807f86..ce675ce 100644
+--- a/examples/pki/cms/auth_v3_token_revoked.json
++++ b/examples/pki/cms/auth_v3_token_revoked.json
+@@ -3,7 +3,7 @@
+                  {"endpoints": [{"adminURL": "http://127.0.0.1:9292/v1", "region": "regionOne", "internalURL": "http://127.0.0.1:9292/v1", "publicURL": "http://127.0.0.1:9292/v1"}], "endpoints_links": [], "type": "image", "name": "glance"},
+                  {"endpoints": [{"adminURL": "http://127.0.0.1:8774/v1.1/64b6f3fbcc53435e8a60fcf89bb6617a", "region": "regionOne", "internalURL": "http://127.0.0.1:8774/v1.1/64b6f3fbcc53435e8a60fcf89bb6617a", "publicURL": "http://127.0.0.1:8774/v1.1/64b6f3fbcc53435e8a60fcf89bb6617a"}], "endpoints_links": [], "type": "compute", "name": "nova"},
+                  {"endpoints": [{"adminURL": "http://127.0.0.1:35357/v3", "region": "RegionOne", "internalURL": "http://127.0.0.1:35357/v3", "publicURL": "http://127.0.0.1:5000/v3"}], "endpoints_links": [], "type": "identity", "name": "keystone"}],
+-     "expires": "2012-06-02T14:47:34Z",
++     "expires_at": "2012-06-02T14:47:34Z",
+      "project": {"enabled": true, "description": null, "name": "tenant_name1", "id": "tenant_id1", "domain": {"id": "domain_id1", "name": "domain_name1"}},
+      "user": {"name": "revoked_username1", "id": "revoked_user_id1", "domain": {"id": "domain_id1", "name": "domain_name1"}},
+      "roles": [{"name": "role1"}, {"name": "role2"}]
+diff --git a/examples/pki/cms/auth_v3_token_revoked.pem b/examples/pki/cms/auth_v3_token_revoked.pem
+index 02e73b0..630f664 100644
+--- a/examples/pki/cms/auth_v3_token_revoked.pem
++++ b/examples/pki/cms/auth_v3_token_revoked.pem
+@@ -1,6 +1,6 @@
+ -----BEGIN CMS-----
+-MIIHsgYJKoZIhvcNAQcCoIIHozCCB58CAQExCTAHBgUrDgMCGjCCBkAGCSqGSIb3
+-DQEHAaCCBjEEggYteyJ0b2tlbiI6DQogICAgeyJjYXRhbG9nIjogW3siZW5kcG9p
++MIIHtQYJKoZIhvcNAQcCoIIHpjCCB6ICAQExCTAHBgUrDgMCGjCCBkMGCSqGSIb3
++DQEHAaCCBjQEggYweyJ0b2tlbiI6DQogICAgeyJjYXRhbG9nIjogW3siZW5kcG9p
+ bnRzIjogW3siYWRtaW5VUkwiOiAiaHR0cDovLzEyNy4wLjAuMTo4Nzc2L3YxLzY0
+ YjZmM2ZiY2M1MzQzNWU4YTYwZmNmODliYjY2MTdhIiwgInJlZ2lvbiI6ICJyZWdp
+ b25PbmUiLCAiaW50ZXJuYWxVUkwiOiAiaHR0cDovLzEyNy4wLjAuMTo4Nzc2L3Yx
+@@ -25,20 +25,20 @@ MjcuMC4wLjE6MzUzNTcvdjMiLCAicmVnaW9uIjogIlJlZ2lvbk9uZSIsICJpbnRl
+ cm5hbFVSTCI6ICJodHRwOi8vMTI3LjAuMC4xOjM1MzU3L3YzIiwgInB1YmxpY1VS
+ TCI6ICJodHRwOi8vMTI3LjAuMC4xOjUwMDAvdjMifV0sICJlbmRwb2ludHNfbGlu
+ a3MiOiBbXSwgInR5cGUiOiAiaWRlbnRpdHkiLCAibmFtZSI6ICJrZXlzdG9uZSJ9
+-XSwNCiAgICAgImV4cGlyZXMiOiAiMjAxMi0wNi0wMlQxNDo0NzozNFoiLA0KICAg
+-ICAicHJvamVjdCI6IHsiZW5hYmxlZCI6IHRydWUsICJkZXNjcmlwdGlvbiI6IG51
+-bGwsICJuYW1lIjogInRlbmFudF9uYW1lMSIsICJpZCI6ICJ0ZW5hbnRfaWQxIiwg
+-ImRvbWFpbiI6IHsiaWQiOiAiZG9tYWluX2lkMSIsICJuYW1lIjogImRvbWFpbl9u
+-YW1lMSJ9fSwNCiAgICAgInVzZXIiOiB7Im5hbWUiOiAicmV2b2tlZF91c2VybmFt
+-ZTEiLCAiaWQiOiAicmV2b2tlZF91c2VyX2lkMSIsICJkb21haW4iOiB7ImlkIjog
+-ImRvbWFpbl9pZDEiLCAibmFtZSI6ICJkb21haW5fbmFtZTEifX0sDQogICAgICJy
+-b2xlcyI6IFt7Im5hbWUiOiAicm9sZTEifSwgeyJuYW1lIjogInJvbGUyIn1dDQog
+-ICAgfQ0KfQ0KMYIBSTCCAUUCAQEwgaQwgZ4xCjAIBgNVBAUTATUxCzAJBgNVBAYT
+-AlVTMQswCQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQKEwlP
+-cGVuU3RhY2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZrZXlz
+-dG9uZUBvcGVuc3RhY2sub3JnMRQwEgYDVQQDEwtTZWxmIFNpZ25lZAIBETAHBgUr
+-DgMCGjANBgkqhkiG9w0BAQEFAASBgD8S/YsERhsYgxNTHQ+AohaWBCxS2eMJDG1e
+-lZBabrMHra5DkP5PAeHKApcagNo4UfcN9dVeGFi+VzHD/lLHaR1r1VI0SiSb+pQ4
+-dTZGEtMVsfPbReWS9RaLt3YePGkZ410Nhx2STF1kmMmVhGGXDzyMbIGGQu6BmQsF
+-G8+izx9v
++XSwNCiAgICAgImV4cGlyZXNfYXQiOiAiMjAxMi0wNi0wMlQxNDo0NzozNFoiLA0K
++ICAgICAicHJvamVjdCI6IHsiZW5hYmxlZCI6IHRydWUsICJkZXNjcmlwdGlvbiI6
++IG51bGwsICJuYW1lIjogInRlbmFudF9uYW1lMSIsICJpZCI6ICJ0ZW5hbnRfaWQx
++IiwgImRvbWFpbiI6IHsiaWQiOiAiZG9tYWluX2lkMSIsICJuYW1lIjogImRvbWFp
++bl9uYW1lMSJ9fSwNCiAgICAgInVzZXIiOiB7Im5hbWUiOiAicmV2b2tlZF91c2Vy
++bmFtZTEiLCAiaWQiOiAicmV2b2tlZF91c2VyX2lkMSIsICJkb21haW4iOiB7Imlk
++IjogImRvbWFpbl9pZDEiLCAibmFtZSI6ICJkb21haW5fbmFtZTEifX0sDQogICAg
++ICJyb2xlcyI6IFt7Im5hbWUiOiAicm9sZTEifSwgeyJuYW1lIjogInJvbGUyIn1d
++DQogICAgfQ0KfQ0KMYIBSTCCAUUCAQEwgaQwgZ4xCjAIBgNVBAUTATUxCzAJBgNV
++BAYTAlVTMQswCQYDVQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQK
++EwlPcGVuU3RhY2sxETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZr
++ZXlzdG9uZUBvcGVuc3RhY2sub3JnMRQwEgYDVQQDEwtTZWxmIFNpZ25lZAIBETAH
++BgUrDgMCGjANBgkqhkiG9w0BAQEFAASBgHI+folnKZbYybTnDo5X3b43LzqXzDMy
++H1HrXW/MIiNVw58JLtcRYp6C2A8TeoAduvt/IkI7YgQ+EDfbYOQ0HSbmnNEyc8nQ
++jAsyD+plz+42eYfTGR+dhZWFmXPxEKE5RB/FQLEqZoJxOICxKzYezSGhreAh9mu/
++Xq/GOSYVo7Rz
+ -----END CMS-----
+diff --git a/examples/pki/cms/auth_v3_token_scoped.json b/examples/pki/cms/auth_v3_token_scoped.json
+index 23ad0e3..c2071f6 100644
+--- a/examples/pki/cms/auth_v3_token_scoped.json
++++ b/examples/pki/cms/auth_v3_token_scoped.json
+@@ -3,7 +3,7 @@
+ 			     {"endpoints": [{"adminURL": "http://127.0.0.1:9292/v1", "region": "regionOne", "internalURL": "http://127.0.0.1:9292/v1", "publicURL": "http://127.0.0.1:9292/v1"}], "endpoints_links": [], "type": "image", "name": "glance"},
+ 			     {"endpoints": [{"adminURL": "http://127.0.0.1:8774/v1.1/64b6f3fbcc53435e8a60fcf89bb6617a", "region": "regionOne", "internalURL": "http://127.0.0.1:8774/v1.1/64b6f3fbcc53435e8a60fcf89bb6617a", "publicURL": "http://127.0.0.1:8774/v1.1/64b6f3fbcc53435e8a60fcf89bb6617a"}], "endpoints_links": [], "type": "compute", "name": "nova"},
+ 			     {"endpoints": [{"adminURL": "http://127.0.0.1:35357/v3", "region": "RegionOne", "internalURL": "http://127.0.0.1:35357/v3", "publicURL": "http://127.0.0.1:5000/v3"}], "endpoints_links": [], "type": "identity", "name": "keystone"}],
+-	 "expires": "2012-06-02T14:47:34Z",
++	 "expires_at": "2012-06-02T14:47:34Z",
+ 	 "project": {"enabled": true, "description": null, "name": "tenant_name1", "id": "tenant_id1", "domain": {"id": "domain_id1", "name": "domain_name1"}},
+ 	 "user": {"name": "user_name1", "id": "user_id1", "domain": {"id": "domain_id1", "name": "domain_name1"}},
+ 	 "roles": [{"name": "role1"}, {"name": "role2"}]
+diff --git a/examples/pki/cms/auth_v3_token_scoped.pem b/examples/pki/cms/auth_v3_token_scoped.pem
+index e289ab1..f90490e 100644
+--- a/examples/pki/cms/auth_v3_token_scoped.pem
++++ b/examples/pki/cms/auth_v3_token_scoped.pem
+@@ -1,6 +1,6 @@
+ -----BEGIN CMS-----
+-MIIHeAYJKoZIhvcNAQcCoIIHaTCCB2UCAQExCTAHBgUrDgMCGjCCBgYGCSqGSIb3
+-DQEHAaCCBfcEggXzeyJ0b2tlbiI6IA0KCXsiY2F0YWxvZyI6IFt7ImVuZHBvaW50
++MIIHewYJKoZIhvcNAQcCoIIHbDCCB2gCAQExCTAHBgUrDgMCGjCCBgkGCSqGSIb3
++DQEHAaCCBfoEggX2eyJ0b2tlbiI6IA0KCXsiY2F0YWxvZyI6IFt7ImVuZHBvaW50
+ cyI6IFt7ImFkbWluVVJMIjogImh0dHA6Ly8xMjcuMC4wLjE6ODc3Ni92MS82NGI2
+ ZjNmYmNjNTM0MzVlOGE2MGZjZjg5YmI2NjE3YSIsICJyZWdpb24iOiAicmVnaW9u
+ T25lIiwgImludGVybmFsVVJMIjogImh0dHA6Ly8xMjcuMC4wLjE6ODc3Ni92MS82
+@@ -24,19 +24,19 @@ ZG1pblVSTCI6ICJodHRwOi8vMTI3LjAuMC4xOjM1MzU3L3YzIiwgInJlZ2lvbiI6
+ ICJSZWdpb25PbmUiLCAiaW50ZXJuYWxVUkwiOiAiaHR0cDovLzEyNy4wLjAuMToz
+ NTM1Ny92MyIsICJwdWJsaWNVUkwiOiAiaHR0cDovLzEyNy4wLjAuMTo1MDAwL3Yz
+ In1dLCAiZW5kcG9pbnRzX2xpbmtzIjogW10sICJ0eXBlIjogImlkZW50aXR5Iiwg
+-Im5hbWUiOiAia2V5c3RvbmUifV0sDQoJICJleHBpcmVzIjogIjIwMTItMDYtMDJU
+-MTQ6NDc6MzRaIiwNCgkgInByb2plY3QiOiB7ImVuYWJsZWQiOiB0cnVlLCAiZGVz
+-Y3JpcHRpb24iOiBudWxsLCAibmFtZSI6ICJ0ZW5hbnRfbmFtZTEiLCAiaWQiOiAi
+-dGVuYW50X2lkMSIsICJkb21haW4iOiB7ImlkIjogImRvbWFpbl9pZDEiLCAibmFt
+-ZSI6ICJkb21haW5fbmFtZTEifX0sDQoJICJ1c2VyIjogeyJuYW1lIjogInVzZXJf
+-bmFtZTEiLCAiaWQiOiAidXNlcl9pZDEiLCAiZG9tYWluIjogeyJpZCI6ICJkb21h
+-aW5faWQxIiwgIm5hbWUiOiAiZG9tYWluX25hbWUxIn19LA0KCSAicm9sZXMiOiBb
+-eyJuYW1lIjogInJvbGUxIn0sIHsibmFtZSI6ICJyb2xlMiJ9XQ0KCSB9DQp9DQox
+-ggFJMIIBRQIBATCBpDCBnjEKMAgGA1UEBRMBNTELMAkGA1UEBhMCVVMxCzAJBgNV
+-BAgTAkNBMRIwEAYDVQQHEwlTdW5ueXZhbGUxEjAQBgNVBAoTCU9wZW5TdGFjazER
+-MA8GA1UECxMIS2V5c3RvbmUxJTAjBgkqhkiG9w0BCQEWFmtleXN0b25lQG9wZW5z
+-dGFjay5vcmcxFDASBgNVBAMTC1NlbGYgU2lnbmVkAgERMAcGBSsOAwIaMA0GCSqG
+-SIb3DQEBAQUABIGAMyJ/o4F6kFPZJ1oGPOaJywv7WKia3x2IOxlDSGBOSfiH64MA
+-Im3kv3AUSfVd9S+ulTHHWST9XGD3eWx8dBMVYO/RcFk6+qala2ryrUYhlOWMkFsB
+-LCNl0HJoUElEPJuqrwVW7Uy90IE0oGbW5uxsm7qoGBHp1B5z2CikaJBKhgg=
++Im5hbWUiOiAia2V5c3RvbmUifV0sDQoJICJleHBpcmVzX2F0IjogIjIwMTItMDYt
++MDJUMTQ6NDc6MzRaIiwNCgkgInByb2plY3QiOiB7ImVuYWJsZWQiOiB0cnVlLCAi
++ZGVzY3JpcHRpb24iOiBudWxsLCAibmFtZSI6ICJ0ZW5hbnRfbmFtZTEiLCAiaWQi
++OiAidGVuYW50X2lkMSIsICJkb21haW4iOiB7ImlkIjogImRvbWFpbl9pZDEiLCAi
++bmFtZSI6ICJkb21haW5fbmFtZTEifX0sDQoJICJ1c2VyIjogeyJuYW1lIjogInVz
++ZXJfbmFtZTEiLCAiaWQiOiAidXNlcl9pZDEiLCAiZG9tYWluIjogeyJpZCI6ICJk
++b21haW5faWQxIiwgIm5hbWUiOiAiZG9tYWluX25hbWUxIn19LA0KCSAicm9sZXMi
++OiBbeyJuYW1lIjogInJvbGUxIn0sIHsibmFtZSI6ICJyb2xlMiJ9XQ0KCSB9DQp9
++DQoxggFJMIIBRQIBATCBpDCBnjEKMAgGA1UEBRMBNTELMAkGA1UEBhMCVVMxCzAJ
++BgNVBAgTAkNBMRIwEAYDVQQHEwlTdW5ueXZhbGUxEjAQBgNVBAoTCU9wZW5TdGFj
++azERMA8GA1UECxMIS2V5c3RvbmUxJTAjBgkqhkiG9w0BCQEWFmtleXN0b25lQG9w
++ZW5zdGFjay5vcmcxFDASBgNVBAMTC1NlbGYgU2lnbmVkAgERMAcGBSsOAwIaMA0G
++CSqGSIb3DQEBAQUABIGAE2Xc5jwDUveWjgn/RItwzqsi4PZw+8dgJELGE/+qVrcE
++gJ5iXsR9Lx4yy932ETXFZ1fb+WTX6ytBkvUDMUI4xebZlrF3MIY2RZBzRT+JO0q0
++GsqX9JFtxSKpZcizWMz9HXTNPR44eCmC5ywPTr+igj+xJ2eDgz/ekp1hrnJBu2c=
+ -----END CMS-----
+diff --git a/examples/pki/cms/revocation_list.pem b/examples/pki/cms/revocation_list.pem
+index ff22443..8fcfa7e 100644
+--- a/examples/pki/cms/revocation_list.pem
++++ b/examples/pki/cms/revocation_list.pem
+@@ -6,7 +6,7 @@ MYIBSTCCAUUCAQEwgaQwgZ4xCjAIBgNVBAUTATUxCzAJBgNVBAYTAlVTMQswCQYD
+ VQQIEwJDQTESMBAGA1UEBxMJU3Vubnl2YWxlMRIwEAYDVQQKEwlPcGVuU3RhY2sx
+ ETAPBgNVBAsTCEtleXN0b25lMSUwIwYJKoZIhvcNAQkBFhZrZXlzdG9uZUBvcGVu
+ c3RhY2sub3JnMRQwEgYDVQQDEwtTZWxmIFNpZ25lZAIBETAHBgUrDgMCGjANBgkq
+-hkiG9w0BAQEFAASBgEqJBkjT4owaIANEzzVTS17GG4VR/s1rQOAajqYCSt+PEsz4
+-H1QVsstP/FznwrfrphEdAvosWs3vTx9GgDm1wI5gBeAP56rbtGqzsqZ1PrbzjRpI
+-5jHjMF99oMdVeazRCk4CaaoiFo9Rb7A4HfEGHAhoyOieW90Pz3PuLcQqLqSS
++hkiG9w0BAQEFAASBgJMkLgRgYefScR8x1/htXmSqvqMDo6LmjKE+FePLK0USPPw7
++kpAS8U8zuxR2l7nd/Dy6YrwuNrtKiifF1RiPgtmvZ93GJw3lDWPVKK0G+xK9lNqI
++cNlWHSJo++jU2ZTk7TuC8OjhxPlsC7KTXXrIE4E6dsV6IeRE1BTEUD4bvI/l
+ -----END CMS-----
+diff --git a/examples/pki/private/cakey.pem b/examples/pki/private/cakey.pem
+index 3513f92..fd38aee 100644
+--- a/examples/pki/private/cakey.pem
++++ b/examples/pki/private/cakey.pem
+@@ -1,16 +1,16 @@
+ -----BEGIN PRIVATE KEY-----
+-MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAOw4quFzQ/xbUOKu
+-LtXdiZLPA0Wi38iGEa+T8tp7j3US44wAamckdZb4cq9/Qx03EBKd2mcJvUoPrLnS
+-lnHQMH2VGA1whZpZTWqt8ydQdDYB1SUKeUoxcjq8EKl8X8Sd3dP5amlyFCOIGVhF
+-yAXYgaYlmf+s6FIzpY55Uy2zX+nZAgMBAAECgYEAkSGL03InHf/YpTzRJ7Kx2JH5
+-d6pHBYNhkFc8yQFLNWnChfynYvFikbvZcnuk92kiJd34FoBEXSFeRNjed9SqRP+i
+-gBXy8nqDnnm6af/URHz1H00pbiTAS5xSJZ2XUFCAa0eJEdDv8bEWdTbhfbYc1Lt2
+-FISQ1b0hO7gqI1cvoAUCQQD+RFOg1N6eaIiOowQL5YrT8+EywWZqDHAPAYpQvvdP
+-UxZtKA7lyiA8fy5bVGc3zmv6D3ZpNKPh5p4WpABvKC+DAkEA7dTaWrsJZr2V1plC
+-71JmexyQNJBrCQb3zoJo2oImuAVXPlj3aNhwJftPaZXt6brICBWfDH6CD/YH7rrt
+-6HyGcwJAAdrBuWSUExe0F0Y9G1EbSBx5QgODGbbpglKCjcA20Y9LlJQ8N5TX01ki
+-H2xoLFIHG5XNSUsm/tjNwmCD2Eu0vQJBAK1XVAaJB+MgDtOoRMbVUegs+1W0ZK7h
+-qz+SgQWxkrLRAbNpeHmsNqEYN9sG8a5G+oAZ8iBTHEyxzzpKeBfYms0CQB1EUSoS
+-I96Wh4Mae7TXak6aSfl/dF2c3vNB2oYjZTN58JM8l731bh2rI4/0kSPbV5Mtnmk4
+-AOLVl+ZJjR6y90I=
++MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJ9ua8GSnhyRr7J5
++Wvu+PTwU4Vo2KrazwwE/Fd32dcZtX6at0/Zr62dADsC0Ig6MTfVZCIrrf2HJpTzW
++CXa4n0kZXRZaq/L/qIv3Yl51FAOl06nCCsC1g+IIG4OnnQW+YbLfB0MHsOV/TdFb
++C6Y5t4UzFh0i6WqF7Z9ADKsBBXYlAgMBAAECgYEAmuWUSdCiT014L2VacUXGhq4e
++uB/yZenG51oca7e9e5jeGrm+Oydk4b7J1o3snMfSIjJra1UcQKzCHpYxQahkD/+/
++XXz7+1jMHyZwaiGcrzqBltcCgfp1ogiT/hjidBzIgyOAv+CN5NpRBvLMGgEZpE8G
++BX3hxvTEaEvt6B6qqg0CQQDMH4LHEhMWrR5r0w3Cd6Xnx6AdQLhXvsjsxU/vQayn
++rm2jb7Gnk9P9v/1rylDHESdkPewSc5Vxde8rk1ldDe9DAkEAx/M2KXDW9AVKXwap
++qP6RjejopxqHK5lgcDr56cybUGib+dYndQFVQmhpYPz1C+b9sbn1iVpXLKpsO2JG
++6EjqdwJBAKQWdJ+otPWWpwzQdZAtdI21GM5LN6U5tfU3zEEuDyggfPxUDoECwfiK
++/KJI2dScwoi/imVuyuSRhHkIE19Nk1cCQG9wX+ls2ICcSjz4C6sCZsE+5BvuLxPf
++od4rIIpr3MxN4VC3SLpvicM/SiwiD7kYfqCFUhHBZgCg4z2dooNn0DUCQHUV8DsM
++ZoWx2D6sqaI9KExwzfLR/9AbDpqyDa/js8LSMqo5OakA47buqKiWaBlBfSb/qccz
++NsmQV0JeyF6cJB0=
+ -----END PRIVATE KEY-----
+diff --git a/examples/pki/private/signing_key.pem b/examples/pki/private/signing_key.pem
+index 2a21dbb..dedde22 100644
+--- a/examples/pki/private/signing_key.pem
++++ b/examples/pki/private/signing_key.pem
+@@ -1,16 +1,16 @@
+ -----BEGIN PRIVATE KEY-----
+-MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKYm0YA4g5eLu96H
+-lUI5IjQTflWGEkPNlCaEL7qGG82J3QIpPT+t73+NpbtrUjLPFP6DZfxKh7yPdq2Y
+-Rqc6/cEVQELmimJaz5NUp/YSRxY46LUh2Eqvor5Ru1pi6CK0JGGMxa96/soomLcy
+-9HL+vKG4yhMBjGWrJ/eZyUo6gMRVAgMBAAECgYAmfB9Sn8R7ObaOWMFN0YYGoe1F
+-SgS5B8klEsErZxzRgvlaIss5EMTEur6EptsnQagPO8hHo8vE9UX796WF3rgfvYlm
+-rWzADFF9JQeb1CRy2wdPEB5wHYWksynKaRhPt6byv2qNqmTKB6JH3fbm1q7Hkrw6
+-BjDvuadpdrWBzTPOEQJBANIdSkW2Yo0HVqZz428Ng1zXQQkwlONrFmtHV5OrPLKs
+-cu5qE2hGHlu3fxr/Gb/bqLwaCx+LUUjgEopChwQyQU8CQQDKb7vefl8JDRYNcLPM
+-CCT7D93g+kYW3ONziBYwQ0sOpSfIS1WQfNRVvsHFAb9IF9g+qgOo4rELEsDeKkUo
+-C88bAkAFHruZmUkrgJtG8RoAscaas5AdJjbql8hzEsj6iziube9bCfCxIMxKld0e
+-DktVVof1FXlh6mYvrW4mOlrJ6mOXAkAgCoFc3Pmj0BtucykyIRPhXQiMZHCVi87A
+-aYjBiNUnc0KRtELNxMRC8hdvXDBvc765ZGWB5KeLDiPSxjP9+6iDAkA+G1v4y4FP
+-r8jd6yPPORii1lTAnYAeoBvgqHj7l/2qi+QEYKIW7Q0pNx20BiO3YZoAgL7LoxyR
+-EVbW0VXOpHxk
++MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAL9W4wyZZ3E8UGEo
++ZSh31ip+8N3vDS9tTfP/PUxx5fK/nN7FziyJJ+ulkQolaycNJOc5kNNOGyxa/+tP
++SkM4sZCWq8igIIehpJeauB1nFBdQCB4t7bI3EbVjAteIby4gx0RZWuvSyYrkO0nh
++8oCGPWK3KNPX/bj4vBVJkvLfbn1xAgMBAAECgYEAiUigE7QlghuSWIORQR3qbgcy
++bypLvZGhcsXZh3XZVPiiZzxpl465M9xRWoRKg3Rs2/JztQi/em24XW9Ai0asLyHL
++u/kZ45A6fbX51QsY989eS0zwsKV/YzY4V2Nvv+MkzfR/sSdtnOu5C0pPf+wuyazZ
++6Ky2/GpIcEA8yTl1q3kCQQDozmQdIdWG/9viBxdoW8wXlb2zA47MaV9WphLwC1rV
++J/00X0SgM94it1BhltxCTrIQ72WF7vBtvDw51N1Rf1wnAkEA0mbnrmAiKwfJVyeV
++PUN0fz5N6JKsUSVEY6Wt+ySDJqmro27uiHgZhmQb+lwLE5VfTZrdLx5LGa2Mr4w0
++8degpwJBAN1AKQ02toPSbdpl+u0HMPPJL7wNyYyjKCRlOOJBKFYj5xP65nGKWbaM
++mSvl//ZUbA6ENewPpRflKSedEaj+bUkCQDfdXNye59OXEK2Uc/q9Q1xZtaPv9dLh
++20O+BPDu4+fLGyic1rbjdJuLTyZtc/9yJMjdOqc9GuGpg/ZEevZPs3cCQDa2AbNj
++uF+KX2u9+38hcN4APnGAk7Z452WbwoXBY7X4SsA4xYqjPIw3QEOqn2zT4A6dt0IX
++11zRtas1zYePTXg=
+ -----END PRIVATE KEY-----
+diff --git a/examples/pki/private/ssl_key.pem b/examples/pki/private/ssl_key.pem
+index e8ad2d7..ab8dca4 100644
+--- a/examples/pki/private/ssl_key.pem
++++ b/examples/pki/private/ssl_key.pem
+@@ -1,16 +1,16 @@
+ -----BEGIN PRIVATE KEY-----
+-MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAM323GVGJ6UImf6n
+-fz9P+9MURBo0okaV/3ewyfSMri8DbM0sCqDtC43R1jIrHtEdnUU7kHguFXc09p9p
+-HSRbblZ3TNUuZgfoLTNUUY5LETrXdlIQ8WQDqUZq2kSbUBWYkHOYlzmowoWa2hKU
+-C1ifHcleI2dVMW+LIkDhXPEc4XO1AgMBAAECgYBOZfMKkaOxjA6iAjvLa7Sdag9q
+-MjK6z4nIk4CsF4iN2K3ngyYgj1pgh0kTG5rFWpJssfmR5WjCUWS21RoEptDeZf/A
+-jRqzW3u493JAhyOjTK4DYbB9CwCmeGkoImC3nn2PrBgG1OPrSQMB3ODqVA2Pa1eF
+-omqKQmAqCCijtmllmQJBAOnpN3sjykUlGVWY7HxdBAOsQ5DkkCXL6ZSjA3pRYvJQ
+-12pKELZyxZ8GtVCFvOjaCpdxL+1MsRHkEfZpWz9o9BsCQQDhagjUFbgAQzo/TH1X
+-iblrnWUi7rs+IIDOF48qy/t1FKFlyCHbMYQLB/rPSN1G+5uMEapCuOBpVQsO9v5n
+-wJRvAkBQXOPG1sEDiH9vvR5ii8J5UJHWEfDES45wlqD3QUbxYXzg85lSVZQ30qIw
+-jAIfLeo9pZGFwbeEIgtZ0VCcNH7JAkBK3FEkRjY+eBUvEnMKEGYw9CuzZz9uCZNd
+-Xnughe/z2S8kw0tjJVWp6DOGhbdfLI5i/TbjQ8zbjm/Gv4aL5GwnAkEA42UWJKNQ
+-ztq73xmVmihToMjMe6k2DDPQpq+e2b/522Vz1ZDJlIV9tpoykFX2XiPnRz1o1oWd
+-DXQBvYeFzthvKA==
++MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKFS7ztV1Ur3H+J+
++UrQlkxtbE/yr8GzJ+JO5yqG7OWpACtxSm3EQ1+qTLtHSIrwCeON2K6zht+HDxht9
++ATw61c3qu6NQYpfW//VH7bXXTZnF5c+dj1awpfqejzSL6dQO5grRl1Z2JF4IR//z
++iCXqgzk/QdzVYjZiH0+JYaM56ukRAgMBAAECgYARVPiw1kLpH+3EBrBZ/GN2n+1g
++yxQ0i+px7JcRkyzS9nh0PUfH+PhJknCISFxE+LsGLQ76LvHzhnYFRAPa9bM8lZQx
++gAjroYx8vXSD5pcmDs+7SqxWCP/PI9IlT6F0dHanwXcLPjPCeBUZN/Z/ZyuOIpML
++DMDfbXHpbg9BF41qJQJBANPJ2VG6KrSqxzM1f7AHSpOp2UZqylMCe14TMSkWaHHX
++Bla8p+6D76Ixskh49L9yEpxFplgLP3fRcFfNpRCUSY8CQQDDADhxiQ+jsR69YJMe
++QYXYLpQfF2751x789NPfpytDEUOFZ8yyyLp3aNOAYoMrLXaMQTLTJgT5dA2D8QdU
++shNfAkEAwDzEnPFt2CX3wFy8NSy5HcWbKda/JY/oKSEki1YCoep6n3qIt/BcMI4J
++dM0N40SI7f4umlZDWt/pqFlKjfz7swJARYbjmR+ccunpIu63JdeI6G6bI4bQa8ZW
++5yxICvtowm36XCuJYcmOKps2phT53cBE/3cTrxNkPKkzVHLxATLJEwJBAL5sOt1g
++ChxUqvhBQtTgToX/WTDtGF3PEBNwU0YeOz4GweoqABxMzg08W/6rvsIFismNuWY5
++W6bZ8CxyKPcq/aE=
+ -----END PRIVATE KEY-----
+diff --git a/keystoneclient/middleware/auth_token.py b/keystoneclient/middleware/auth_token.py
+index 694089c..0d0e124 100644
+--- a/keystoneclient/middleware/auth_token.py
++++ b/keystoneclient/middleware/auth_token.py
+@@ -934,7 +934,7 @@ class AuthProtocol(object):
+             if self._token_is_v2(data):
+                 timestamp = data['access']['token']['expires']
+             elif self._token_is_v3(data):
+-                timestamp = data['token']['expires']
++                timestamp = data['token']['expires_at']
+             else:
+                 self.LOG.error('invalid token format')
+                 return
+diff --git a/tests/test_auth_token_middleware.py b/tests/test_auth_token_middleware.py
+index f2615d6..86d9ee2 100644
+--- a/tests/test_auth_token_middleware.py
++++ b/tests/test_auth_token_middleware.py
+@@ -91,7 +91,7 @@ TOKEN_RESPONSES = {
+         'access': {
+             'token': {
+                 'id': UUID_TOKEN_DEFAULT,
+-                'expires': '2999-01-01T00:00:10Z',
++                'expires': '2020-01-01T00:00:10.000123Z',
+                 'tenant': {
+                     'id': 'tenant_id1',
+                     'name': 'tenant_name1',
+@@ -112,7 +112,7 @@ TOKEN_RESPONSES = {
+         'access': {
+             'token': {
+                 'id': VALID_DIABLO_TOKEN,
+-                'expires': '2999-01-01T00:00:10',
++                'expires': '2020-01-01T00:00:10.000123Z',
+                 'tenantId': 'tenant_id1',
+             },
+             'user': {
+@@ -129,7 +129,7 @@ TOKEN_RESPONSES = {
+         'access': {
+             'token': {
+                 'id': UUID_TOKEN_UNSCOPED,
+-                'expires': '2999-01-01T00:00:10Z',
++                'expires': '2020-01-01T00:00:10.000123Z',
+             },
+             'user': {
+                 'id': 'user_id1',
+@@ -145,7 +145,7 @@ TOKEN_RESPONSES = {
+         'access': {
+             'token': {
+                 'id': 'valid-token',
+-                'expires': '2999-01-01T00:00:10Z',
++                'expires': '2020-01-01T00:00:10.000123Z',
+                 'tenant': {
+                     'id': 'tenant_id1',
+                     'name': 'tenant_name1',
+@@ -163,7 +163,7 @@ TOKEN_RESPONSES = {
+     },
+     v3_UUID_TOKEN_DEFAULT: {
+         'token': {
+-            'expires': '2999-01-01T00:00:10Z',
++            'expires_at': '2020-01-01T00:00:10.000123Z',
+             'user': {
+                 'id': 'user_id1',
+                 'name': 'user_name1',
+@@ -189,7 +189,7 @@ TOKEN_RESPONSES = {
+     },
+     v3_UUID_TOKEN_UNSCOPED: {
+         'token': {
+-            'expires': '2999-01-01T00:00:10Z',
++            'expires_at': '2020-01-01T00:00:10.000123Z',
+             'user': {
+                 'id': 'user_id1',
+                 'name': 'user_name1',
+@@ -202,7 +202,7 @@ TOKEN_RESPONSES = {
+     },
+     v3_UUID_TOKEN_DOMAIN_SCOPED: {
+         'token': {
+-            'expires': '2999-01-01T00:00:10Z',
++            'expires_at': '2020-01-01T00:00:10.000123Z',
+             'user': {
+                 'id': 'user_id1',
+                 'name': 'user_name1',
+@@ -304,7 +304,7 @@ def setUpModule(self):
+ 
+     self.TOKEN_RESPONSES[self.SIGNED_v3_TOKEN_SCOPED_KEY] = {
+         'token': {
+-            'expires': '2999-01-01T00:00:10Z',
++            'expires': '2020-01-01T00:00:10.000123Z',
+             'user': {
+                 'id': 'user_id1',
+                 'name': 'user_name1',
+diff --git a/tests/v2_0/test_auth.py b/tests/v2_0/test_auth.py
+index 0c0af99..21fa1ed 100644
+--- a/tests/v2_0/test_auth.py
++++ b/tests/v2_0/test_auth.py
+@@ -16,7 +16,7 @@ class AuthenticateAgainstKeystoneTests(utils.TestCase):
+         self.TEST_RESPONSE_DICT = {
+             "access": {
+                 "token": {
+-                    "expires": "2999-01-01T00:00:10Z",
++                    "expires": "2020-01-01T00:00:10.000123Z",
+                     "id": self.TEST_TOKEN,
+                     "tenant": {
+                         "id": self.TEST_TENANT_ID
+@@ -71,7 +71,7 @@ class AuthenticateAgainstKeystoneTests(utils.TestCase):
+         self.mox.ResetAll()
+         TEST_TOKEN = "abcdef"
+         self.TEST_RESPONSE_DICT['access']['token']['expires'] = \
+-            "2999-01-01T00:00:10Z"
++            '2020-01-01T00:00:10.000123Z'
+         self.TEST_RESPONSE_DICT['access']['token']['id'] = TEST_TOKEN
+ 
+         resp = utils.TestResponse({

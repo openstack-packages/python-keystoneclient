@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.2.3
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -14,6 +14,8 @@ Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.
 # patches_base=0.2.3
 #
 Patch0001: 0001-Config-value-for-revocation-list-timeout.patch
+Patch0002: 0002-Fix-v3-with-UUID-and-memcache-expiring.patch
+Patch0003: 0003-Check-Expiry.patch
 
 BuildArch:  noarch
 
@@ -51,6 +53,8 @@ Identity API.
 %setup -q
 
 %patch0001 -p1
+%patch0002 -p1
+%patch0003 -p1
 
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
@@ -86,6 +90,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Tue May 28 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.2.3-4
+- Check token expiry. (CVE-2013-2104)
+
 * Thu May 02 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.2.3-3
 - Config value for revocation list timeout. (#923519)
 
