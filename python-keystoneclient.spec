@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.2.5
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -13,16 +13,17 @@ Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.
 #
 # patches_base=0.2.5
 #
-Patch0001: 0001-Add-find-method-to-CrudManager.patch
-Patch0002: 0002-Allow-keystoneclient-to-work-with-older-keystone-ins.patch
-Patch0003: 0003-Fix-optional-keyring-support-add-basic-keyring-tests.patch
-Patch0004: 0004-Cleanup-shell-s-authentication-check.patch
-Patch0005: 0005-Provide-keystone-CLI-man-page.patch
-Patch0006: 0006-Use-AuthRef-for-some-client-fields.patch
-Patch0007: 0007-Fix-memcache-encryption-middleware.patch
-Patch0008: 0008-Change-memcache-config-entry-name-in-Keystone-to-be-.patch
-Patch0009: 0009-Implements-v3-auth-client.patch
-Patch0010: 0010-Python-2.6-compatibility-for-tests-test_keyring.py.patch
+Patch0001: 0001-Remove-runtime-dependency-on-python-pbr.patch
+Patch0002: 0002-Add-find-method-to-CrudManager.patch
+Patch0003: 0003-Allow-keystoneclient-to-work-with-older-keystone-ins.patch
+Patch0004: 0004-Fix-optional-keyring-support-add-basic-keyring-tests.patch
+Patch0005: 0005-Cleanup-shell-s-authentication-check.patch
+Patch0006: 0006-Provide-keystone-CLI-man-page.patch
+Patch0007: 0007-Use-AuthRef-for-some-client-fields.patch
+Patch0008: 0008-Fix-memcache-encryption-middleware.patch
+Patch0009: 0009-Change-memcache-config-entry-name-in-Keystone-to-be-.patch
+Patch0010: 0010-Implements-v3-auth-client.patch
+Patch0011: 0011-Python-2.6-compatibility-for-tests-test_keyring.py.patch
 
 BuildArch:  noarch
 
@@ -39,7 +40,6 @@ Requires: python-requests >= 0.8.8
 Requires: python-simplejson
 Requires: python-oslo-config >= 1.1.0
 Requires: python-d2to1
-Requires: python-pbr
 Requires: python-six
 # other requirements
 Requires: python-setuptools
@@ -74,6 +74,10 @@ Identity API.
 %patch0008 -p1
 %patch0009 -p1
 %patch0010 -p1
+%patch0011 -p1
+
+# We provide version like this in order to remove runtime dep on pbr.
+sed -i s/REDHATKEYSTONECLIENTVERSION/%{version}/ keystoneclient/__init__.py
 
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
@@ -108,6 +112,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Tue Jun 25 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.2.5-2
+- Remove runtime dependency on python-pbr.
+
 * Tue Jun 25 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.2.5-1
 - Update to latest upstream. (0.2.5 + patches)
 - Add new python requires from requirements.txt. (d2to1, pbr, six)

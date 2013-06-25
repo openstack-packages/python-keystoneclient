@@ -1,4 +1,4 @@
-From 974ec621dc56db7c464a1b3ce5f11d058dc2a5bc Mon Sep 17 00:00:00 2001
+From e3ac9df7f6188f0aa7ad6ed8bc891f562093bb15 Mon Sep 17 00:00:00 2001
 From: Sascha Peilicke <saschpe@gmx.de>
 Date: Mon, 17 Jun 2013 12:13:19 +0200
 Subject: [PATCH] Python-2.6 compatibility for tests/test_keyring.py

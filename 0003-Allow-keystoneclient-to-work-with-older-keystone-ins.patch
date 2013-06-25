@@ -1,4 +1,4 @@
-From 35f9e9922a388b1600c947a27f80c94cb76800dc Mon Sep 17 00:00:00 2001
+From ac6ef02a19bf303772860429af693261b461e32a Mon Sep 17 00:00:00 2001
 From: Brian Lamar <brian.lamar@rackspace.com>
 Date: Mon, 25 Mar 2013 13:19:26 -0400
 Subject: [PATCH] Allow keystoneclient to work with older keystone installs

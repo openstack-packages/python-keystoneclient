@@ -1,4 +1,4 @@
-From 31239b3c4c36689efb5ea62c568150a50beeb76a Mon Sep 17 00:00:00 2001
+From 0238c5225f654a22569162dc38c7f0415f687b0e Mon Sep 17 00:00:00 2001
 From: Julien Danjou <julien@danjou.info>
 Date: Thu, 24 Jan 2013 17:46:29 +0100
 Subject: [PATCH] Use AuthRef for some client fields

@@ -1,4 +1,4 @@
-From e2b8178481e7da1f6f90135e0e0953e4f0c1eec0 Mon Sep 17 00:00:00 2001
+From 38d02e746b0f298711bb98c7f7c83ea1dd345d83 Mon Sep 17 00:00:00 2001
 From: Dean Troyer <dtroyer@gmail.com>
 Date: Fri, 5 Apr 2013 17:36:32 -0500
 Subject: [PATCH] Add find() method to CrudManager

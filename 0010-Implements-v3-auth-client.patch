@@ -1,4 +1,4 @@
-From 5fbca33595b43a027065e726cac04f530469567a Mon Sep 17 00:00:00 2001
+From fe3f74a4d6f31f63ecc4dd6cb22b9c56b1e588c7 Mon Sep 17 00:00:00 2001
 From: lin-hua-cheng <lin-hua.cheng@hp.com>
 Date: Wed, 13 Feb 2013 22:52:05 -0600
 Subject: [PATCH] Implements v3 auth client.

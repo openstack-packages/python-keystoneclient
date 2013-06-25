@@ -1,4 +1,4 @@
-From ad904e2b5bac76a8281ec3befff19fa558ca941e Mon Sep 17 00:00:00 2001
+From 7c53803947f14b613635e33b48643d7fcbb59dfb Mon Sep 17 00:00:00 2001
 From: Jamie Lennox <jlennox@redhat.com>
 Date: Tue, 4 Jun 2013 11:16:09 +1000
 Subject: [PATCH] Cleanup shell's authentication check.

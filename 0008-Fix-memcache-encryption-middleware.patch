@@ -1,4 +1,4 @@
-From e589458aadd36a96ebd09b2392b37cf381e55f47 Mon Sep 17 00:00:00 2001
+From 18336318011752ec9c47effcb03b02d7e425ec2d Mon Sep 17 00:00:00 2001
 From: "Bryan D. Payne" <bdpayne@acm.org>
 Date: Fri, 7 Jun 2013 09:34:25 -0700
 Subject: [PATCH] Fix memcache encryption middleware

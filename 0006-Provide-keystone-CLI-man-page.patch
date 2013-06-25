@@ -1,4 +1,4 @@
-From feefba304cd05b3a40d0e7520bc14c35e25f5e93 Mon Sep 17 00:00:00 2001
+From 5638037b1879eb4a6a5f70d097c3351118441994 Mon Sep 17 00:00:00 2001
 From: Jakub Ruzicka <jruzicka@redhat.com>
 Date: Tue, 28 May 2013 20:37:43 +0200
 Subject: [PATCH] Provide keystone CLI man page.
