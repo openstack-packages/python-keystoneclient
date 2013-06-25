@@ -1,0 +1,86 @@
+From e2b8178481e7da1f6f90135e0e0953e4f0c1eec0 Mon Sep 17 00:00:00 2001
+From: Dean Troyer <dtroyer@gmail.com>
+Date: Fri, 5 Apr 2013 17:36:32 -0500
+Subject: [PATCH] Add find() method to CrudManager
+
+Add a find() methods to CrudManager to maintain compatability
+with existing CLI lookups using utils.find_resource().
+
+Change-Id: Ia9b38b975bb88fb361f3471b66f98c7e81bbc6de
+---
+ keystoneclient/base.py | 22 ++++++++++++++++++++++
+ tests/v3/utils.py      | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
+
+diff --git a/keystoneclient/base.py b/keystoneclient/base.py
+index c57ee62..d40c969 100644
+--- a/keystoneclient/base.py
++++ b/keystoneclient/base.py
+@@ -271,6 +271,28 @@ class CrudManager(Manager):
+         return self._delete(
+             self.build_url(**kwargs))
+ 
++    def find(self, base_url=None, **kwargs):
++        """
++        Find a single item with attributes matching ``**kwargs``.
++        """
++        kwargs = self._filter_kwargs(kwargs)
++
++        rl = self._list(
++            '%(base_url)s%(query)s' % {
++                'base_url': self.build_url(base_url=base_url, **kwargs),
++                'query': '?%s' % urllib.urlencode(kwargs) if kwargs else '',
++            },
++            self.collection_key)
++        num = len(rl)
++
++        if num == 0:
++            msg = "No %s matching %s." % (self.resource_class.__name__, kwargs)
++            raise exceptions.NotFound(404, msg)
++        elif num > 1:
++            raise exceptions.NoUniqueMatch
++        else:
++            return rl[0]
++
+ 
+ class Resource(object):
+     """
+diff --git a/tests/v3/utils.py b/tests/v3/utils.py
+index bfb3861..6ae7c0e 100644
+--- a/tests/v3/utils.py
++++ b/tests/v3/utils.py
+@@ -195,6 +195,34 @@ class CrudTests(testtools.TestCase):
+         self.assertTrue(len(returned_list))
+         [self.assertTrue(isinstance(r, self.model)) for r in returned_list]
+ 
++    def test_find(self, ref=None):
++        ref = ref or self.new_ref()
++        ref_list = [ref]
++        resp = TestResponse({
++            "status_code": 200,
++            "text": self.serialize(ref_list),
++        })
++
++        method = 'GET'
++        kwargs = copy.copy(self.TEST_REQUEST_BASE)
++        kwargs['headers'] = self.headers[method]
++        query = '?name=%s' % ref['name'] if hasattr(ref, 'name') else ''
++        requests.request(
++            method,
++            urlparse.urljoin(
++                self.TEST_URL,
++                'v3/%s%s' % (self.collection_key, query)),
++            **kwargs).AndReturn((resp))
++        self.mox.ReplayAll()
++
++        returned = self.manager.find(name=getattr(ref, 'name', None))
++        self.assertTrue(isinstance(returned, self.model))
++        for attr in ref:
++            self.assertEqual(
++                getattr(returned, attr),
++                ref[attr],
++                'Expected different %s' % attr)
++
+     def test_update(self, ref=None):
+         ref = ref or self.new_ref()
+         req_ref = ref.copy()

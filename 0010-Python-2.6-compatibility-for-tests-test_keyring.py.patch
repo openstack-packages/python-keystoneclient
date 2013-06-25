@@ -1,0 +1,42 @@
+From 974ec621dc56db7c464a1b3ce5f11d058dc2a5bc Mon Sep 17 00:00:00 2001
+From: Sascha Peilicke <saschpe@gmx.de>
+Date: Mon, 17 Jun 2013 12:13:19 +0200
+Subject: [PATCH] Python-2.6 compatibility for tests/test_keyring.py
+
+TestCase.setUpClass() and unittest.SkipTest are features added in 2.7.
+Calling super(KeyringTest, cls).setUpClass() could have never worked
+since tests.utils.TestCase doesn't implement that (class) method.
+
+Change-Id: Ifbb0465be24fd13ad68d52c0d7fa4c5090d0f694
+---
+ tests/test_keyring.py | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/tests/test_keyring.py b/tests/test_keyring.py
+index 8aaa667..f3eba82 100644
+--- a/tests/test_keyring.py
++++ b/tests/test_keyring.py
+@@ -1,5 +1,4 @@
+ import datetime
+-import unittest
+ 
+ from keystoneclient import access
+ from keystoneclient import client
+@@ -27,15 +26,11 @@ TENANT_ID = 'tenant_id'
+ 
+ class KeyringTest(utils.TestCase):
+ 
+-    @classmethod
+-    def setUpClass(cls):
+-        super(KeyringTest, cls).setUpClass()
+-
++    def setUp(self):
+         if keyring is None:
+-            raise unittest.SkipTest(
++            self.skipTest(
+                 'optional package keyring or pickle is not installed')
+ 
+-    def setUp(self):
+         class MemoryKeyring(keyring.backend.KeyringBackend):
+             """Simple memory keyring with support for multiple keys"""
+             def __init__(self):
