@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.3.1
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -61,8 +61,9 @@ sed -i s/REDHATKEYSTONECLIENTVERSION/%{version}/ keystoneclient/__init__.py
 
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
-# let RPM handle deps
-sed -i '/setup_requires/d; /install_requires/d; /dependency_links/d' setup.py
+# Remove the requirements file so that pbr hooks don't add it
+# to distutils requiers_dist config.
+rm -rf {test-,}requirements.txt tools/{pip,test}-requires
 
 %build
 %{__python} setup.py build
@@ -92,6 +93,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Fri Aug 02 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.1-3
+- Remove requirements files.
+
 * Mon Jul 08 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.1-1
 - Update to upstream version 0.3.1.
 
