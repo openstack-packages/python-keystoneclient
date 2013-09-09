@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.3.2
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -61,9 +61,6 @@ sed -i s/REDHATKEYSTONECLIENTVERSION/%{version}/ keystoneclient/__init__.py
 
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
-# Remove the requirements file so that pbr hooks don't add it
-# to distutils requiers_dist config.
-rm -rf {test-,}requirements.txt tools/{pip,test}-requires
 
 %build
 %{__python} setup.py build
@@ -93,6 +90,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Mon Sep 09 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-2
+- Remove pbr deps in the patch instead of this spec file.
+
 * Mon Sep 09 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-1
 - Update to upstream 0.3.2.
 - Ec2Signer patch is included in this version.
