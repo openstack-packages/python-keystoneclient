@@ -3,18 +3,17 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.3.1
-Release:    4%{?dist}
+Version:    0.3.2
+Release:    1%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
 Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.tar.gz
 
 #
-# patches_base=0.3.1
+# patches_base=0.3.2
 #
 Patch0001: 0001-Remove-runtime-dependency-on-python-pbr.patch
-Patch0002: 0002-Ec2Signer-Allow-signature-verification-for-older-bot.patch
 
 BuildArch:  noarch
 
@@ -56,7 +55,6 @@ Identity API.
 %setup -q
 
 %patch0001 -p1
-%patch0002 -p1
 
 # We provide version like this in order to remove runtime dep on pbr.
 sed -i s/REDHATKEYSTONECLIENTVERSION/%{version}/ keystoneclient/__init__.py
@@ -95,6 +93,10 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Mon Sep 09 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-1
+- Update to upstream 0.3.2.
+- Ec2Signer patch is included in this version.
+
 * Mon Aug 05 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.1-4
 - Ec2Signer: Allow signature verification for older boto versions. (#984752)
 
