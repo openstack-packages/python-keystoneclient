@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.3.2
-Release:    4%{?dist}
+Release:    5%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -25,7 +25,6 @@ BuildRequires: python-d2to1
 # from requirements.txt
 Requires: python-argparse
 Requires: python-iso8601 >= 0.1.4
-Requires: python-httplib2
 Requires: python-prettytable
 Requires: python-requests >= 0.8.8
 Requires: python-simplejson
@@ -92,6 +91,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Tue Sep 10 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-5
+- Remove bogus python-httplib2 dependency.
+
 * Mon Sep 16 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-4
 - Add python-netaddr dependency.
 
