@@ -91,7 +91,7 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
-* Tue Sep 10 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-5
+* Wed Sep 18 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-5
 - Remove bogus python-httplib2 dependency.
 
 * Mon Sep 16 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-4
