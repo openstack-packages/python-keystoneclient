@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.3.2
-Release:    5%{?dist}
+Release:    6%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -73,10 +73,15 @@ install -p -D -m 644 tools/keystone.bash_completion %{buildroot}%{_sysconfdir}/b
 # Delete tests
 rm -fr %{buildroot}%{python_sitelib}/tests
 
+# Build HTML docs
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
 pushd doc
 make html
 popd
+# Build man page
+sphinx-build -b man doc/source man
+install -p -D -m 644 man/keystone.1 %{buildroot}%{_mandir}/man1/keystone.1
+
 # Fix hidden-file-or-dir warnings
 rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 
@@ -86,11 +91,15 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %{_sysconfdir}/bash_completion.d/keystone.bash_completion
 %{python_sitelib}/keystoneclient
 %{python_sitelib}/*.egg-info
+%{_mandir}/man1/keystone.1*
 
 %files doc
 %doc LICENSE doc/build/html
 
 %changelog
+* Thu Sep 19 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-6
+- Include upstream man page.
+
 * Wed Sep 18 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.3.2-5
 - Remove bogus python-httplib2 dependency.
 
