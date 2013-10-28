@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.4.1
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -27,13 +27,11 @@ Requires: python-argparse
 Requires: python-iso8601 >= 0.1.4
 Requires: python-prettytable
 Requires: python-requests >= 0.8.8
-Requires: python-simplejson
 Requires: python-oslo-config >= 1.1.0
-Requires: python-d2to1
 Requires: python-six
+Requires: python-netaddr
 Requires: python-babel
 # other requirements
-Requires: python-netaddr
 Requires: python-setuptools
 Requires: python-keyring
 
@@ -97,6 +95,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Mon Oct 28 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.4.1-3
+- Remove unused requires: d2to1, simplejson
+
 * Mon Oct 21 2013 Alan Pevec <apevec@redhat.com> 0.4.1-2
 - webob is no longer used in authtoken
 
