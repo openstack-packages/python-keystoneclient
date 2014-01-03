@@ -4,7 +4,7 @@ Name:       python-keystoneclient
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
 Version:    0.4.1
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
@@ -14,6 +14,7 @@ Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.
 # patches_base=0.4.1
 #
 Patch0001: 0001-Remove-runtime-dependency-on-python-pbr.patch
+Patch0002: 0002-keystoneclient-requires-an-email-address-when-creati.patch
 
 BuildArch:  noarch
 
@@ -54,6 +55,7 @@ Identity API.
 %setup -q
 
 %patch0001 -p1
+%patch0002 -p1
 
 # We provide version like this in order to remove runtime dep on pbr.
 sed -i s/REDHATKEYSTONECLIENTVERSION/%{version}/ keystoneclient/__init__.py
@@ -95,6 +97,9 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %doc LICENSE doc/build/html
 
 %changelog
+* Fri Jan 03 2014 Jakub Ruzicka <jruzicka@redhat.com> 0.4.1-4
+- Don't require an email address when creating a user
+
 * Mon Oct 28 2013 Jakub Ruzicka <jruzicka@redhat.com> 0.4.1-3
 - Remove unused requires: d2to1, simplejson
 
