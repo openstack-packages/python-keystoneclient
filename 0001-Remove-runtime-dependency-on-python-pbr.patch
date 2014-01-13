@@ -1,22 +1,18 @@
-From 9b806dc97da51f93d9eb258969b5660c88904f62 Mon Sep 17 00:00:00 2001
+From e2b37e23a45709f96e101238bbd622457a23af3f Mon Sep 17 00:00:00 2001
 From: Jakub Ruzicka <jruzicka@redhat.com>
 Date: Mon, 8 Jul 2013 15:22:05 +0200
 Subject: [PATCH] Remove runtime dependency on python-pbr.
 
 ---
- keystoneclient/__init__.py |  5 +----
- requirements.txt           | 10 ----------
- setup.py                   |  1 -
- test-requirements.txt      | 13 -------------
- 4 files changed, 1 insertion(+), 28 deletions(-)
- delete mode 100644 requirements.txt
- delete mode 100644 test-requirements.txt
+ keystoneclient/__init__.py | 5 +----
+ setup.py                   | 1 -
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/keystoneclient/__init__.py b/keystoneclient/__init__.py
-index 07aaa70..c5fb9ed 100644
+index ab4f7a1..f735877 100644
 --- a/keystoneclient/__init__.py
 +++ b/keystoneclient/__init__.py
-@@ -13,7 +13,4 @@
+@@ -13,10 +13,7 @@
  #    License for the specific language governing permissions and limitations
  #    under the License.
  
@@ -25,22 +21,9 @@ index 07aaa70..c5fb9ed 100644
 -
 -__version__ = pbr.version.VersionInfo('python-keystoneclient').version_string()
 +__version__ = "REDHATKEYSTONECLIENTVERSION"
-diff --git a/requirements.txt b/requirements.txt
-deleted file mode 100644
-index 8533bde..0000000
---- a/requirements.txt
-+++ /dev/null
-@@ -1,10 +0,0 @@
--pbr>=0.5.21,<1.0
--argparse
--iso8601>=0.1.4
--PrettyTable>=0.6,<0.8
--requests>=1.1
--simplejson>=2.0.9
--six>=1.4.1
--oslo.config>=1.2.0
--netaddr
--Babel>=1.3
+ 
+ __all__ = [
+     # Modules
 diff --git a/setup.py b/setup.py
 index 70c2b3f..afab729 100644
 --- a/setup.py
@@ -51,22 +34,3 @@ index 70c2b3f..afab729 100644
  setuptools.setup(
 -    setup_requires=['pbr'],
      pbr=True)
-diff --git a/test-requirements.txt b/test-requirements.txt
-deleted file mode 100644
-index 9cefe29..0000000
---- a/test-requirements.txt
-+++ /dev/null
-@@ -1,13 +0,0 @@
--hacking>=0.5.6,<0.8
--coverage>=3.6
--discover
--fixtures>=0.3.14
--httpretty>=0.6.3
--keyring>=1.6.1,<2.0
--mock>=1.0
--mox3>=0.7.0
--pycrypto>=2.6
--sphinx>=1.1.2
--testrepository>=0.0.17
--testtools>=0.9.32
--WebOb>=1.2.3,<1.3

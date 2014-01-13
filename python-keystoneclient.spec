@@ -3,18 +3,17 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.4.1
-Release:    4%{?dist}
+Version:    0.4.2
+Release:    1%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
 Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.tar.gz
 
 #
-# patches_base=0.4.1
+# patches_base=0.4.2
 #
 Patch0001: 0001-Remove-runtime-dependency-on-python-pbr.patch
-Patch0002: 0002-keystoneclient-requires-an-email-address-when-creati.patch
 
 BuildArch:  noarch
 
@@ -55,10 +54,12 @@ Identity API.
 %setup -q
 
 %patch0001 -p1
-%patch0002 -p1
 
 # We provide version like this in order to remove runtime dep on pbr.
 sed -i s/REDHATKEYSTONECLIENTVERSION/%{version}/ keystoneclient/__init__.py
+
+# Let RPM handle the dependencies
+rm -f test-requirements.txt requirements.txt
 
 # Remove bundled egg-info
 rm -rf python_keystoneclient.egg-info
@@ -73,17 +74,14 @@ install -p -D -m 644 tools/keystone.bash_completion %{buildroot}%{_sysconfdir}/b
 # Delete tests
 rm -fr %{buildroot}%{python_sitelib}/tests
 
-# Build HTML docs
+# Build HTML docs and man page
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
-pushd doc
-make html
-popd
-# Build man page
+sphinx-build -b html doc/source html
 sphinx-build -b man doc/source man
 install -p -D -m 644 man/keystone.1 %{buildroot}%{_mandir}/man1/keystone.1
 
 # Fix hidden-file-or-dir warnings
-rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
+rm -fr html/.doctrees html/.buildinfo
 
 %files
 %doc LICENSE README.rst
@@ -94,9 +92,13 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %{_mandir}/man1/keystone.1*
 
 %files doc
-%doc LICENSE doc/build/html
+%doc LICENSE html
 
 %changelog
+* Mon Jan 13 2014 Jakub Ruzicka <jruzicka@redhat.com> 0.4.2-1
+- Update to upstream 0.4.2
+- Align doc build with other client packages
+
 * Fri Jan 03 2014 Jakub Ruzicka <jruzicka@redhat.com> 0.4.1-4
 - Don't require an email address when creating a user
 
