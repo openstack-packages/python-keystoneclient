@@ -3,7 +3,7 @@ Name:       python-keystoneclient
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.4.2
+Version:    0.6.0
 Release:    1%{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
@@ -11,7 +11,7 @@ URL:        http://pypi.python.org/pypi/%{name}
 Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.tar.gz
 
 #
-# patches_base=0.4.2
+# patches_base=0.6.0
 #
 Patch0001: 0001-Remove-runtime-dependency-on-python-pbr.patch
 
@@ -95,6 +95,9 @@ rm -fr html/.doctrees html/.buildinfo
 %doc LICENSE html
 
 %changelog
+* Fri Feb 21 2014 Jakub Ruzicka <jruzicka@redhat.com> 0.6.0-1
+- Update to upstream 0.6.0
+
 * Mon Jan 13 2014 Jakub Ruzicka <jruzicka@redhat.com> 0.4.2-1
 - Update to upstream 0.4.2
 - Align doc build with other client packages
