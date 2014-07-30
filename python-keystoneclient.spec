@@ -1,3 +1,6 @@
+%global upstream_version UPSTREAMVERSION
+
+
 Name:       python-keystoneclient
 # Since folsom-2 OpenStack clients follow their own release plan
 # and restarted version numbering from 0.1.1
@@ -45,13 +48,14 @@ Summary:    Documentation for OpenStack Identity API Client
 Group:      Documentation
 
 BuildRequires: python-sphinx
+BuildRequires: python-oslo-sphinx
 
 %description doc
 Documentation for the client library for interacting with Openstack
 Identity API.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{upstream_version}
 
 %patch0001 -p1
 
