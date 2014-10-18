@@ -31,6 +31,8 @@ Requires: python-iso8601 >= 0.1.4
 Requires: python-prettytable
 Requires: python-requests >= 0.8.8
 Requires: python-oslo-config >= 1.1.0
+Requires: python-oslo-serialization
+Requires: python-oslo-utils
 Requires: python-six >= 1.5.2
 Requires: python-netaddr
 Requires: python-babel
@@ -99,6 +101,9 @@ rm -fr html/.doctrees html/.buildinfo
 %doc LICENSE html
 
 %changelog
+* Fri Oct 17 2014 Dan Prince <dprince@redhat.com> - XXX
+- Add dependencies for oslo.serialization and oslo.utils
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0.9.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
