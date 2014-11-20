@@ -1,21 +1,15 @@
-%global upstream_version UPSTREAMVERSION
-
-
 Name:       python-keystoneclient
 # Since folsom-2 OpenStack clients follow their own release plan
 # and restarted version numbering from 0.1.1
 # https://lists.launchpad.net/openstack/msg14248.html
 Epoch:      1
-Version:    0.9.0
-Release:    2%{?dist}
+Version:    XXX
+Release:    XXX{?dist}
 Summary:    Client library for OpenStack Identity API
 License:    ASL 2.0
 URL:        http://pypi.python.org/pypi/%{name}
 Source0:    http://pypi.python.org/packages/source/p/%{name}/%{name}-%{version}.tar.gz
 
-#
-# patches_base=0.9.0
-#
 Patch0001: 0001-Remove-runtime-dependency-on-python-pbr.patch
 
 BuildArch:  noarch
@@ -27,18 +21,22 @@ BuildRequires: python-d2to1
 
 # from requirements.txt
 Requires: python-argparse
+Requires: python-babel
 Requires: python-iso8601 >= 0.1.4
-Requires: python-prettytable
-Requires: python-requests >= 0.8.8
-Requires: python-oslo-config >= 1.1.0
+Requires: python-lxml
+Requires: python-netaddr
+Requires: python-oslo-config >= 2:1.4.0
 Requires: python-oslo-serialization
 Requires: python-oslo-utils
+Requires: python-prettytable
+Requires: python-requests >= 0.8.8
 Requires: python-six >= 1.5.2
-Requires: python-netaddr
-Requires: python-babel
+Requires: python-stevedore
 # other requirements
 Requires: python-setuptools
 Requires: python-keyring
+# for s3_token middleware
+Requires: python-webob
 
 
 %description
@@ -103,6 +101,13 @@ rm -fr html/.doctrees html/.buildinfo
 %changelog
 * Fri Oct 17 2014 Dan Prince <dprince@redhat.com> - XXX
 - Add dependencies for oslo.serialization and oslo.utils
+
+* Tue Sep 30 2014 Alan Pevec <alan.pevec@redhat.com> 1:0.11.1-1
+- Update to upstream 0.11.1
+
+* Thu Aug 14 2014 Jakub Ruzicka <jruzicka@redhat.com> 1:0.10.1-1
+- Update to upstream 0.10.1
+- New Requires: python-stevedore, python-lxml
 
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0.9.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
