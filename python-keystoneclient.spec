@@ -29,6 +29,7 @@ Requires: python-prettytable
 Requires: python-requests >= 2.2.0
 Requires: python-six >= 1.9.0
 Requires: python-stevedore >= 1.1.0
+Requires: python-keystoneauth1 >= 1.0.0
 Requires: python-pbr
 
 # other requirements
