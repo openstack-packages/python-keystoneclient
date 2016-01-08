@@ -1,0 +1,7 @@
+Code-Review+2: Haïkel Guémar <haikel.guemar@gmail.com>
+Verified+1: Haïkel Guémar <haikel.guemar@gmail.com>
+Submitted-by: Haïkel Guémar <haikel.guemar@gmail.com>
+Submitted-at: Fri, 08 Jan 2016 10:44:59 +0100
+Reviewed-on: https://review.gerrithub.io/253693
+Project: openstack-packages/python-keystoneclient
+Branch: refs/heads/rpm-kilo
