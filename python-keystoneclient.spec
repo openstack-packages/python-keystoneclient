@@ -65,27 +65,22 @@ rm -f test-requirements.txt requirements.txt
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
-install -p -D -m 644 tools/keystone.bash_completion %{buildroot}%{_sysconfdir}/bash_completion.d/keystone.bash_completion
 
 # Delete tests
 rm -fr %{buildroot}%{python_sitelib}/tests
 
-# Build HTML docs and man page
+# Build HTML docs
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
 sphinx-build -b html doc/source html
-sphinx-build -b man doc/source man
-install -p -D -m 644 man/keystone.1 %{buildroot}%{_mandir}/man1/keystone.1
 
 # Fix hidden-file-or-dir warnings
 rm -fr html/.doctrees html/.buildinfo
 
 %files
-%doc LICENSE README.rst
-%{_bindir}/keystone
-%{_sysconfdir}/bash_completion.d/keystone.bash_completion
+%doc README.rst
+%license LICENSE
 %{python_sitelib}/keystoneclient
 %{python_sitelib}/*.egg-info
-%{_mandir}/man1/keystone.1*
 
 %files doc
 %doc LICENSE html
