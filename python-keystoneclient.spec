@@ -91,3 +91,4 @@ rm -fr html/.doctrees html/.buildinfo
 %doc LICENSE html
 
 %changelog
+# REMOVEME: error caused by commit 
