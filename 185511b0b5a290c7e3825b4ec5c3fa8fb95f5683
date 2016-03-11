@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a6ff13c_39d5b343",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000935
+      },
+      "writtenOn": "2016-03-11T13:40:17Z",
+      "side": 1,
+      "message": "keystone CLI not just manpages!",
+      "revId": "185511b0b5a290c7e3825b4ec5c3fa8fb95f5683",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a6ff13c_59ca6fa2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000935
+      },
+      "writtenOn": "2016-03-11T13:40:17Z",
+      "side": 1,
+      "message": "add link to upstream commit, ...has been removed in:\nhttp://git.openstack.org/cgit/openstack/python-keystoneclient/commit/?id\u003def13bd8cf6c6e46f4ce04fa3a21552913417b586",
+      "revId": "185511b0b5a290c7e3825b4ec5c3fa8fb95f5683",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
