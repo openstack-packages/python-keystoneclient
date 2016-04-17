@@ -1,0 +1,7 @@
+Code-Review+2: Haïkel Guémar <haikel.guemar@gmail.com>
+Verified+1: rdo-ci-jenkins <whayutin+rdocijenkins@redhat.com>
+Submitted-by: Alan Pevec <alan.pevec@redhat.com>
+Submitted-at: Sun, 17 Apr 2016 16:24:35 -0400
+Reviewed-on: https://review.gerrithub.io/273147
+Project: openstack-packages/python-keystoneclient
+Branch: refs/heads/rpm-master
